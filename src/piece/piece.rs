@@ -10,7 +10,6 @@ impl Position {
     }
 }
 
-// Définir un trait pour les pièces d'échecs
 pub trait ChessPiece {
     fn get_position(&self) -> &Position;
     fn get_position_mut(&mut self) -> &mut Position;
@@ -18,7 +17,6 @@ pub trait ChessPiece {
     fn display(&self);
 }
 
-// Structure de base pour une pièce
 pub struct Piece {
     position: Position
 }
@@ -31,7 +29,6 @@ impl Piece {
     }
 }
 
-// Implémentation du trait pour Piece
 impl ChessPiece for Piece {
     fn get_position(&self) -> &Position {
         &self.position
