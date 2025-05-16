@@ -1,17 +1,24 @@
+#[derive(Clone)]
 pub struct Position {
-    x: u8,
-    y: u8
+    pub(crate) x: u8,
+    pub(crate) y: u8
 }
 
 impl Position {
     pub fn new(x: u8, y: u8) -> Self {
-        Self {
-            x,
-            y
-        }
+        Self { x, y }
     }
 }
 
+// Définir un trait pour les pièces d'échecs
+pub trait ChessPiece {
+    fn get_position(&self) -> &Position;
+    fn get_position_mut(&mut self) -> &mut Position;
+    fn shift(&mut self, x: u8, y: u8);
+    fn display(&self);
+}
+
+// Structure de base pour une pièce
 pub struct Piece {
     position: Position
 }
@@ -22,13 +29,24 @@ impl Piece {
             position: Position::new(x, y)
         }
     }
+}
 
-    pub fn shift(&mut self, x: u8, y: u8) {
+// Implémentation du trait pour Piece
+impl ChessPiece for Piece {
+    fn get_position(&self) -> &Position {
+        &self.position
+    }
+
+    fn get_position_mut(&mut self) -> &mut Position {
+        &mut self.position
+    }
+
+    fn shift(&mut self, x: u8, y: u8) {
         self.position.x = x;
         self.position.y = y;
     }
 
-    pub fn display(&self) {
+    fn display(&self) {
         println!("Position : ({}, {})", self.position.x, self.position.y);
     }
 }
