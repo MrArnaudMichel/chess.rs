@@ -13,18 +13,30 @@ impl Position {
 pub trait ChessPiece {
     fn get_position(&self) -> &Position;
     fn get_position_mut(&mut self) -> &mut Position;
-    fn shift(&mut self, x: u8, y: u8);
-    fn display(&self);
+
+    fn shift(&mut self, x: u8, y: u8) {
+        let pos = self.get_position_mut();
+        pos.x = x;
+        pos.y = y;
+    }
+
+    fn display(&self) {
+        let pos = self.get_position();
+        println!("Position : ({}, {})", pos.x, pos.y);
+    }
 }
 
+
 pub struct Piece {
-    position: Position
+    position: Position,
+    side: u8
 }
 
 impl Piece {
-    pub fn new(x: u8, y: u8) -> Self {
+    pub fn new(x: u8, y: u8, side: u8) -> Self {
         Self {
-            position: Position::new(x, y)
+            position: Position::new(x, y),
+            side
         }
     }
 }

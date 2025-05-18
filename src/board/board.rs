@@ -56,6 +56,8 @@ impl Board {
     pub fn move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
         if let Some(piece) = self.get_piece_mut((from.0, from.1)) {
             piece.display();
+        }else { 
+            println!("Aucune pièce n'est disponible à cette endroit")
         }
     }
 }

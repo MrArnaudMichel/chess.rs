@@ -8,7 +8,7 @@ pub struct Pawn {
 impl Pawn {
     pub fn new(x: u8, y: u8) -> Self {
         Self {
-            piece: Piece::new(x, y),
+            piece: Piece::new(x, y, 0),
             has_moved: false,
         }
     }
@@ -42,21 +42,5 @@ impl ChessPiece for Pawn {
 
     fn get_position_mut(&mut self) -> &mut Position {
         self.piece.get_position_mut()
-    }
-
-    fn shift(&mut self, x: u8, y: u8) {
-        if self.is_valid_move(x, y) {
-            self.piece.shift(x, y);
-            self.has_moved = true;
-        } else {
-            println!("Mouvement invalide pour le pion!");
-        }
-    }
-
-    fn display(&self) {
-        println!("Pion en position : ({}, {})",
-                 self.get_position().x,
-                 self.get_position().y
-        );
     }
 }
