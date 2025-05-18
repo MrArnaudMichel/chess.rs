@@ -1,4 +1,4 @@
-use crate::piece::piece::ChessPiece;
+use crate::piece::piece::{ChessPiece, Position};
 pub struct Board {
     pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
 }
@@ -17,15 +17,6 @@ impl Board {
             self.pieces[pos.y as usize][pos.x as usize] = Some(piece);
         } else {
             println!("Position invalide : la pièce doit être dans un tableau 8x8");
-        }
-    }
-
-    pub fn get_piece(&self, position: (u8, u8)) -> Option<&Box<dyn ChessPiece>> {
-        let (x, y) = position;
-        if x < 8 && y < 8 {
-            self.pieces[y as usize][x as usize].as_ref()
-        } else {
-            None
         }
     }
 
@@ -52,10 +43,10 @@ impl Board {
         println!("  a b c d e f g h");
     }
 
-    pub fn move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
-        if let Some(piece) = self.get_piece_mut((from.0, from.1)) {
-            if piece.is_valid_move(to.0, to.1) {
-                println!("Mouvement valide")
+    pub fn move_piece(&mut self, from: Position, to: Position) {
+        if let Some(piece) = self.get_piece_mut((from.x, from.y)) {
+            if piece.is_valid_move(&to) {
+                self._move_piece(from, to);
             } else {
                 println!("Mouvement invalide")
             }
@@ -64,7 +55,16 @@ impl Board {
         }
     }
 
-    fn _move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
-        
+    fn _move_piece(&mut self, from: Position, to: Position) {
+        let (from_x, from_y) = (from.x as usize, from.y as usize);
+        let (to_x, to_y) = (to.x as usize, to.y as usize);
+
+        if let Some(mut piece) = self.pieces[from_y][from_x].take() {
+            piece.shift(to.x, to.y);
+            piece.display();
+            self.pieces[to_y][to_x] = Some(piece);
+        } else {
+            println!("Aucune pièce trouvée à la position ({}, {})", from.x, from.y);
+        }
     }
 }

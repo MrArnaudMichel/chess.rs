@@ -1,7 +1,7 @@
 mod board;
 mod piece;
 
-use crate::piece::piece::ChessPiece;
+use crate::piece::piece::{ChessPiece, Position};
 use board::board::Board;
 use piece::pawn::Pawn;
 
@@ -14,10 +14,12 @@ fn main() {
 
     println!("État initial de l'échiquier :");
     board.display_all();
-
+    
     println!("\nDéplacement du pion de b2 à b3...");
-    board.move_piece((1, 1), (1, 2));
-    board.move_piece((1, 2), (1, 3));
+    board.move_piece(Position::new(1, 1), Position::new(1, 2));
+    
+    println!("\nDéplacement du pion de b3 à b4...");
+    board.move_piece(Position::new(1, 2), Position::new(1, 3));
 
     // Réafficher l'échiquier après le déplacement
     println!("État de l'échiquier après le déplacement :");

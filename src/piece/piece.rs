@@ -13,27 +13,17 @@ impl Piece {
             side,
         }
     }
-}
 
-impl ChessPiece for Piece {
-    fn get_position(&self) -> &Position {
+    pub(crate) fn get_position(&self) -> &Position {
         &self.position
     }
 
-    fn get_position_mut(&mut self) -> &mut Position {
+    pub(crate) fn get_position_mut(&mut self) -> &mut Position {
         &mut self.position
     }
-
-    fn is_valid_move(&self, new_x: u8, new_y: u8) -> bool {
-        todo!()
-    }
-
-    fn shift(&mut self, x: u8, y: u8) {
-        self.position.x = x;
-        self.position.y = y;
-    }
-
-    fn display(&self) {
-        println!("Position : ({}, {})", self.position.x, self.position.y);
+    pub fn to_string(&self) -> String {
+        let hello = String::from(if self.side == 0 {"white"} else { "black" });
+        format!("{}, position: {}", hello, self.position.to_string())
     }
 }
+
