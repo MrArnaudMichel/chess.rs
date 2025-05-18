@@ -36,10 +36,9 @@ impl ChessPiece for Pawn {
             return false;
         };
 
-        let dx = destination.x as i8 - current_pos.x as i8;
-        let dy = destination.y as i8 - current_pos.y as i8;
+        let dx = destination.x - current_pos.x;
+        let dy = destination.y - current_pos.y;
 
-        // Diagonale pour capturer
         if dx.abs() == 1 && dy == dir {
             if board.is_occupied(destination) == - (side as i8) {
                 return true;
@@ -51,7 +50,6 @@ impl ChessPiece for Pawn {
             return false;
         }
 
-        // Avance simple
         if dx == 0 && dy == dir {
             if board.is_occupied(destination) >= 0 {
                 println!("Case devant occupée.");
@@ -60,7 +58,6 @@ impl ChessPiece for Pawn {
             return true;
         }
 
-        // Avance double si pas encore bougé
         if dx == 0 && dy == 2 * dir {
             if self.has_moved {
                 println!("Ce pion a déjà bougé, il ne peut avancer de deux cases.");
