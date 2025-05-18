@@ -1,9 +1,9 @@
-mod piece;
 mod board;
+mod piece;
 
-use piece::pawn::Pawn;
-use board::board::Board;
 use crate::piece::piece::ChessPiece;
+use board::board::Board;
+use piece::pawn::Pawn;
 
 fn main() {
     let mut board = Board::new();

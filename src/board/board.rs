@@ -1,6 +1,6 @@
 use crate::piece::piece::ChessPiece;
 pub struct Board {
-    pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8]
+    pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
 }
 
 impl Board {
@@ -38,7 +38,6 @@ impl Board {
         }
     }
 
-
     pub fn display_all(&self) {
         for y in (0..8).rev() {
             print!("{} ", y + 1);
@@ -52,16 +51,20 @@ impl Board {
         }
         println!("  a b c d e f g h");
     }
-    
+
     pub fn move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
         if let Some(piece) = self.get_piece_mut((from.0, from.1)) {
-            if piece.is_valid_move(to.0, to.1) { 
+            if piece.is_valid_move(to.0, to.1) {
                 println!("Mouvement valide")
-            } else { 
+            } else {
                 println!("Mouvement invalide")
             }
-        }else {
+        } else {
             println!("Aucune pièce n'est disponible à cette endroit")
         }
+    }
+
+    fn _move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
+        
     }
 }

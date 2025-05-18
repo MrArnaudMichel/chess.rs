@@ -1,4 +1,4 @@
-use super::piece::{Piece, Position, ChessPiece};
+use super::piece::{ChessPiece, Piece, Position};
 
 pub struct Pawn {
     piece: Piece,
