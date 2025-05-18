@@ -17,6 +17,7 @@ fn main() {
 
     println!("\nDéplacement du pion de b2 à b3...");
     board.move_piece((1, 1), (1, 2));
+    board.move_piece((1, 2), (1, 3));
 
     // Réafficher l'échiquier après le déplacement
     println!("État de l'échiquier après le déplacement :");

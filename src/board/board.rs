@@ -55,8 +55,12 @@ impl Board {
     
     pub fn move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
         if let Some(piece) = self.get_piece_mut((from.0, from.1)) {
-            piece.display();
-        }else { 
+            if piece.is_valid_move(to.0, to.1) { 
+                println!("Mouvement valide")
+            } else { 
+                println!("Mouvement invalide")
+            }
+        }else {
             println!("Aucune pièce n'est disponible à cette endroit")
         }
     }
