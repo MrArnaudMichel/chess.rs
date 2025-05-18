@@ -20,14 +20,26 @@ impl Board {
         }
     }
 
-    pub fn get_piece_mut(&mut self, position: (u8, u8)) -> Option<&mut Box<dyn ChessPiece>> {
-        let (x, y) = position;
-        if x < 8 && y < 8 {
-            self.pieces[y as usize][x as usize].as_mut()
+    pub fn get_piece(&self, position: &Position) -> Option<&Box<dyn ChessPiece>> {
+        if position.x < 8 && position.y < 8 {
+            self.pieces[position.y as usize][position.x as usize].as_ref()
         } else {
             None
         }
     }
+
+    pub fn is_occupied(&self, position: &Position) -> i8 {
+        if position.x < 8 && position.y < 8 {
+            if let Some(piece) = self.pieces[position.y as usize][position.x as usize].as_ref() {
+                piece.get_side() as i8
+            } else {
+                -1
+            }
+        } else {
+            -1
+        }
+    }
+
 
     pub fn display_all(&self) {
         for y in (0..8).rev() {
@@ -44,16 +56,18 @@ impl Board {
     }
 
     pub fn move_piece(&mut self, from: Position, to: Position) {
-        if let Some(piece) = self.get_piece_mut((from.x, from.y)) {
-            if piece.is_valid_move(&to) {
+
+        if let Some(piece) = self.get_piece(&from) {
+            if piece.is_valid_move(&to, self) {
                 self._move_piece(from, to);
-            } else {
-                println!("Mouvement invalide")
+            } else { 
+                println!("Mouvement impossible")
             }
         } else {
-            println!("Aucune pièce n'est disponible à cette endroit")
+            println!("Aucune pièce trouvée a ces coordonnés");
         }
     }
+
 
     fn _move_piece(&mut self, from: Position, to: Position) {
         let (from_x, from_y) = (from.x as usize, from.y as usize);

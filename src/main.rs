@@ -8,9 +8,11 @@ use piece::pawn::Pawn;
 fn main() {
     let mut board = Board::new();
 
-    let pawn = Pawn::new(1, 1);
+    let pawn = Pawn::new(1, 1, 0);
+    let pawn2 = Pawn::new(1, 2, 1);
     pawn.display();
     board.add_piece(Box::new(pawn));
+    board.add_piece(Box::new(pawn2));
 
     println!("État initial de l'échiquier :");
     board.display_all();
