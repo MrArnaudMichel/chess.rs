@@ -10,15 +10,34 @@ impl Board {
         }
     }
 
-pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) {
-    let pos = piece.get_position().clone(); 
+    pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) {
+        let pos = piece.get_position().clone();
 
-    if pos.x < 8 && pos.y < 8 {
-        self.pieces[pos.y as usize][pos.x as usize] = Some(piece);
-    } else {
-        println!("Position invalide : la pièce doit être dans un tableau 8x8");
+        if pos.x < 8 && pos.y < 8 {
+            self.pieces[pos.y as usize][pos.x as usize] = Some(piece);
+        } else {
+            println!("Position invalide : la pièce doit être dans un tableau 8x8");
+        }
     }
-}
+
+    pub fn get_piece(&self, position: (u8, u8)) -> Option<&Box<dyn ChessPiece>> {
+        let (x, y) = position;
+        if x < 8 && y < 8 {
+            self.pieces[y as usize][x as usize].as_ref()
+        } else {
+            None
+        }
+    }
+
+    pub fn get_piece_mut(&mut self, position: (u8, u8)) -> Option<&mut Box<dyn ChessPiece>> {
+        let (x, y) = position;
+        if x < 8 && y < 8 {
+            self.pieces[y as usize][x as usize].as_mut()
+        } else {
+            None
+        }
+    }
+
 
     pub fn display_all(&self) {
         for y in (0..8).rev() {
@@ -35,16 +54,8 @@ pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) {
     }
     
     pub fn move_piece(&mut self, from: (u8, u8), to: (u8, u8)) {
-        let (from_x, from_y) = (from.0 as usize, from.1 as usize);
-        let (to_x, to_y) = (to.0 as usize, to.1 as usize);
-
-        if let Some(mut piece) = self.pieces[from_y][from_x].take() {
-            piece.get_position_mut().x = to.0;
-            piece.get_position_mut().y = to.1;
-
-            self.pieces[to_y][to_x] = Some(piece);
-        } else {
-            println!("Aucune pièce trouvée à la position ({}, {})", from.0, from.1);
+        if let Some(piece) = self.get_piece_mut((from.0, from.1)) {
+            piece.display();
         }
     }
 }

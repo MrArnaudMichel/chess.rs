@@ -2,7 +2,7 @@ use super::piece::{Piece, Position, ChessPiece};
 
 pub struct Pawn {
     piece: Piece,
-    has_moved: bool, // Pour gérer le premier mouvement spécial du pion
+    has_moved: bool,
 }
 
 impl Pawn {
