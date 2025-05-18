@@ -9,7 +9,7 @@ fn main() {
     let mut board = Board::new();
 
     let pawn = Pawn::new(1, 1, 0);
-    let pawn2 = Pawn::new(1, 2, 1);
+    let pawn2 = Pawn::new(2, 2, 1);
     pawn.display();
     board.add_piece(Box::new(pawn));
     board.add_piece(Box::new(pawn2));
@@ -18,7 +18,7 @@ fn main() {
     board.display_all();
     
     println!("\nDéplacement du pion de b2 à b3...");
-    board.move_piece(Position::new(1, 1), Position::new(1, 2));
+    board.move_piece(Position::new(1, 1), Position::new(2, 2));
     
     println!("\nDéplacement du pion de b3 à b4...");
     board.move_piece(Position::new(1, 2), Position::new(1, 3));

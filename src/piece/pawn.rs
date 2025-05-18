@@ -40,7 +40,7 @@ impl ChessPiece for Pawn {
         let dy = destination.y - current_pos.y;
 
         if dx.abs() == 1 && dy == dir {
-            if board.is_occupied(destination) == - (side as i8) {
+            if board.is_occupied(destination) ==  ((side ^ 1) as i8) {
                 return true;
             } else if board.is_occupied(destination) == side as i8{
                 println!("Impossible de capturer une pièce alliée.");
@@ -64,7 +64,7 @@ impl ChessPiece for Pawn {
                 return false;
             }
 
-            let intermediate = Position::new(current_pos.x, (current_pos.y + dir));
+            let intermediate = Position::new(current_pos.x, current_pos.y + dir);
             if board.is_occupied(&intermediate) >= 0{
                 println!("La case intermédiaire est occupée.");
                 return false;
