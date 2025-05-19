@@ -46,13 +46,13 @@ impl Board {
             print!("{} ", y + 1);
             for x in 0..8 {
                 match &self.pieces[y][x] {
-                    Some(_) => print!("P "),
-                    None => print!("- "),
+                    Some(piece) => print!("{} ", piece.piece_to_hexa()),
+                    None => print!("-- "),
                 }
             }
             println!();
         }
-        println!("  a b c d e f g h");
+        println!("  A  B  C  D  E  F  G  H");
     }
 
     pub fn move_piece(&mut self, from: Position, to: Position) {

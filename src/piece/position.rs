@@ -15,7 +15,13 @@ impl Position {
     }
 }
 
-pub fn to_hexadecimal(position: &Position) -> (char, char) {
+impl PartialEq for Position {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
+fn to_hexadecimal(position: &Position) -> (char, char) {
     let x_char = (b'A' + position.x as u8) as char;
     (x_char, (b'1' + position.y as u8) as char)
 }
