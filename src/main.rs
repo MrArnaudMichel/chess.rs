@@ -2,7 +2,7 @@ mod input;
 mod model;
 
 use model::board::board::Board;
-use model::piece::{bishop::Bishop, pawn::Pawn, rook::Rook};
+use model::piece::{bishop::Bishop, pawn::Pawn, rook::Rook, queen::Queen};
 use input::input::input_turn;
 
 fn main() {
@@ -25,6 +25,9 @@ fn setup_game(){
     board.add_piece(Box::new(Bishop::new(5, 0, 0)));
     board.add_piece(Box::new(Bishop::new(2, 7, 1)));
     board.add_piece(Box::new(Bishop::new(5, 7, 1)));
+
+    board.add_piece(Box::new(Queen::new(3, 0, 1)));
+    board.add_piece(Box::new(Queen::new(3, 7, 1)));
 
     let mut turn: u8 = 0;
 

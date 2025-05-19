@@ -43,7 +43,6 @@ impl ChessPiece for Bishop {
         let dx = destination.x - current_pos.x;
         let dy = destination.y - current_pos.y;
 
-        // Le fou ne peut se déplacer qu'en diagonale (dx.abs() == dy.abs())
         if dx.abs() != dy.abs() {
             return false;
         }

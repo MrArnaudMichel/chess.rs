@@ -83,5 +83,4 @@ impl ChessPiece for Rook {
     fn display(&self) {
         println!("Pawn {}", self.piece.to_string());
     }
-
 }
