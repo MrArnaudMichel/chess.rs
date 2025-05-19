@@ -26,7 +26,7 @@ fn setup_game(){
     board.add_piece(Box::new(Bishop::new(2, 7, 1)));
     board.add_piece(Box::new(Bishop::new(5, 7, 1)));
 
-    board.add_piece(Box::new(Queen::new(3, 0, 1)));
+    board.add_piece(Box::new(Queen::new(3, 0, 0)));
     board.add_piece(Box::new(Queen::new(3, 7, 1)));
 
     let mut turn: u8 = 0;
@@ -40,7 +40,6 @@ fn setup_game(){
 }
 
 fn play_turn(turn: &mut u8, board: &mut Board) -> bool {
-    println!("{turn}");
     let mut mouv = input_turn();
     let mut result = board.is_occupied(&mouv.0);
 
