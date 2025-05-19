@@ -25,6 +25,8 @@ impl ChessPiece for Rook {
     fn get_position_mut(&mut self) -> &mut Position {
         self.piece.get_position_mut()
     }
+    
+    
 
     fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
         let current_pos = self.get_position();

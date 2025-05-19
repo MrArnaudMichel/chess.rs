@@ -55,16 +55,19 @@ impl Board {
         println!("  A  B  C  D  E  F  G  H");
     }
 
-    pub fn move_piece(&mut self, from: Position, to: Position) {
-
+    pub fn move_piece(&mut self, from: Position, to: Position) -> bool{
+        println!("Deplacement de {} en {}", from.to_string(), to.to_string());
         if let Some(piece) = self.get_piece(&from) {
             if piece.is_valid_move(&to, self) {
                 self._move_piece(from, to);
+                true
             } else { 
-                println!("Mouvement impossible")
+                println!("Mouvement impossible");
+                false
             }
         } else {
             println!("Aucune pièce trouvée a ces coordonnés");
+            false
         }
     }
 

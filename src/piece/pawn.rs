@@ -84,6 +84,13 @@ impl ChessPiece for Pawn {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'P')
     }
 
+    fn shift(&mut self, x: i8, y: i8) {
+        let pos = self.get_position_mut();
+        pos.x = x;
+        pos.y = y;
+        self.has_moved = true;
+    }
+
 
     fn display(&self) {
         println!("Pawn {}", self.piece.to_string());
