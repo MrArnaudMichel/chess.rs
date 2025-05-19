@@ -2,15 +2,13 @@ use crate::board::board::Board;
 use super::piece::{ChessPiece, Piece, Position};
 
 pub struct Pawn {
-    piece: Piece,
-    has_moved: bool,
+    piece: Piece
 }
 
 impl Pawn {
     pub fn new(x: i8, y: i8, side: u8) -> Self {
         Self {
-            piece: Piece::new(x, y, side),
-            has_moved: false,
+            piece: Piece::new(x, y, side)
         }
     }
 }
@@ -20,12 +18,20 @@ impl ChessPiece for Pawn {
         self.piece.get_position()
     }
 
-    fn get_side(&self) -> u8 {
-        self.piece.get_side()
-    }
-
     fn get_position_mut(&mut self) -> &mut Position {
         self.piece.get_position_mut()
+    }
+
+    fn get_piece_mut(&mut self) -> &mut Piece {
+        &mut self.piece
+    }
+
+    fn get_piece(&self) -> &Piece {
+        &self.piece
+    }
+
+    fn get_side(&self) -> u8 {
+        self.piece.get_side()
     }
 
     fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
@@ -59,7 +65,7 @@ impl ChessPiece for Pawn {
         }
 
         if dx == 0 && dy == 2 * dir {
-            if self.has_moved {
+            if self.piece.has_moved() {
                 println!("Ce pion a déjà bougé, il ne peut avancer de deux cases.");
                 return false;
             }
@@ -82,13 +88,6 @@ impl ChessPiece for Pawn {
 
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'P')
-    }
-
-    fn shift(&mut self, x: i8, y: i8) {
-        let pos = self.get_position_mut();
-        pos.x = x;
-        pos.y = y;
-        self.has_moved = true;
     }
 
 
