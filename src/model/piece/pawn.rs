@@ -1,4 +1,4 @@
-use crate::board::board::Board;
+use crate::model::board::board::Board;
 use super::piece::{ChessPiece, Piece, Position};
 
 pub struct Pawn {
@@ -46,7 +46,7 @@ impl ChessPiece for Pawn {
         let dy = destination.y - current_pos.y;
 
         if dx.abs() == 1 && dy == dir {
-            if board.is_occupied(destination) ==  ((side ^ 1) as i8) {
+            if board.is_occupied(destination) == ((side ^ 1) as i8) {
                 return true;
             } else if board.is_occupied(destination) == side as i8{
                 println!("Impossible de capturer une pièce alliée.");

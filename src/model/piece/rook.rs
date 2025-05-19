@@ -1,4 +1,4 @@
-use crate::board::board::Board;
+use crate::model::board::board::Board;
 use super::piece::{ChessPiece, Piece, Position};
 
 pub struct Rook {

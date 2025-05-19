@@ -1,5 +1,5 @@
-use crate::board::board::Board;
-use crate::piece::piece::{Piece, Position};
+use crate::model::board::board::Board;
+use crate::model::piece::piece::{Piece, Position};
 
 pub trait ChessPiece {
     fn get_position(&self) -> &Position;

@@ -1,10 +1,8 @@
-mod board;
-mod piece;
-mod structs;
 mod input;
+mod model;
 
-use board::board::Board;
-use piece::{pawn::Pawn, rook::Rook};
+use model::board::board::Board;
+use model::piece::{bishop::Bishop, pawn::Pawn, rook::Rook};
 use input::input::input_turn;
 
 fn main() {
@@ -22,6 +20,11 @@ fn setup_game(){
     board.add_piece(Box::new(Rook::new(7, 0, 0)));
     board.add_piece(Box::new(Rook::new(0, 7, 1)));
     board.add_piece(Box::new(Rook::new(7, 7, 1)));
+
+    board.add_piece(Box::new(Bishop::new(2, 0, 0)));
+    board.add_piece(Box::new(Bishop::new(5, 0, 0)));
+    board.add_piece(Box::new(Bishop::new(2, 7, 1)));
+    board.add_piece(Box::new(Bishop::new(5, 7, 1)));
 
     let mut turn: u8 = 0;
 
