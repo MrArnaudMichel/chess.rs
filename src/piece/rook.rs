@@ -31,12 +31,12 @@ impl ChessPiece for Rook {
         let side = self.get_side();
 
         if current_pos == destination || (current_pos.x != destination.x && current_pos.y != destination.y) {
-            println!("Mouvement impossible car case non joignable ou case = current");
+            println!("Movement impossible car case non assignable ou case = current");
             return false;
         }
 
         if board.is_occupied(destination) == side as i8 {
-            println!("Destination occupée");
+            println!("Destination occupied");
             return false;
         }
 
@@ -58,7 +58,7 @@ impl ChessPiece for Rook {
 
         for pos in positions_to_check {
             if board.is_occupied(&pos) >= 0 {
-                println!("Chemin obstrué à {}", pos.to_string());
+                println!("Path obstruct à {}", pos.to_string());
                 return false;
             }
         }
@@ -66,7 +66,7 @@ impl ChessPiece for Rook {
     }
 
 
-    fn piece_to_hexa(&self) -> String {
+    fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'R')
     }
 

@@ -46,7 +46,7 @@ impl Board {
             print!("{} ", y + 1);
             for x in 0..8 {
                 match &self.pieces[y][x] {
-                    Some(piece) => print!("{} ", piece.piece_to_hexa()),
+                    Some(piece) => print!("{} ", piece.piece_to_hex()),
                     None => print!("-- "),
                 }
             }

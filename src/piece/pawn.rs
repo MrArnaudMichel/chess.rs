@@ -80,7 +80,7 @@ impl ChessPiece for Pawn {
         false
     }
 
-    fn piece_to_hexa(&self) -> String {
+    fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'P')
     }
 
