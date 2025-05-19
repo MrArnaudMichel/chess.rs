@@ -1,5 +1,5 @@
 pub(crate) use crate::piece::chess_piece::ChessPiece;
-pub(crate) use crate::piece::position::Position;
+pub(crate) use crate::structs::position::Position;
 
 pub struct Piece {
     position: Position,

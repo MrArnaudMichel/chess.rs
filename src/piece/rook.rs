@@ -1,4 +1,3 @@
-use std::cmp::PartialEq;
 use crate::board::board::Board;
 use super::piece::{ChessPiece, Piece, Position};
 
@@ -31,8 +30,8 @@ impl ChessPiece for Rook {
         let current_pos = self.get_position();
         let side = self.get_side();
 
-        if (current_pos.x != destination.x && current_pos.y != current_pos.y) || current_pos == destination {
-            println!("Mouvement impossible car case non joiniable ou case = current");
+        if current_pos == destination || (current_pos.x != destination.x && current_pos.y != destination.y) {
+            println!("Mouvement impossible car case non joignable ou case = current");
             return false;
         }
 
@@ -41,37 +40,31 @@ impl ChessPiece for Rook {
             return false;
         }
 
-        if current_pos.x != destination.x {
-
-            let range = if current_pos.x > destination.x {
-                destination.x..current_pos.x
-            } else {
+        let positions_to_check = if current_pos.x != destination.x {
+            let range = if current_pos.x < destination.x {
                 (current_pos.x + 1)..destination.x
+            } else {
+                (destination.x + 1)..current_pos.x
             };
-            for i in range {
-                let test_pos = Position::new(i, current_pos.y);
-                print!("Test position  {}", test_pos.to_string());
-                if board.is_occupied(&test_pos) >= 0 {
-                    return false;
-                }
-            }
-            return true;
-        }
-        let range = if current_pos.y > destination.y {
-            (destination.y + 1)..current_pos.y
+            range.map(|x| Position::new(x, current_pos.y)).collect::<Vec<_>>()
         } else {
-            (current_pos.y + 1)..(destination.y - 1)
+            let range = if current_pos.y < destination.y {
+                (current_pos.y + 1)..destination.y
+            } else {
+                (destination.y + 1)..current_pos.y
+            };
+            range.map(|y| Position::new(current_pos.x, y)).collect::<Vec<_>>()
         };
-        for i in range {
-            let test_pos = Position::new(current_pos.x, i);
-            if board.is_occupied(&test_pos) >= 0 {
+
+        for pos in positions_to_check {
+            if board.is_occupied(&pos) >= 0 {
+                println!("Chemin obstrué à {}", pos.to_string());
                 return false;
             }
         }
-        return true;
-        
-        false
+        true
     }
+
 
     fn piece_to_hexa(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'R')
