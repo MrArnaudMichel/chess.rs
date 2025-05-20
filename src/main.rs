@@ -1,5 +1,6 @@
 mod input;
 mod model;
+mod ui;
 
 use model::board::board::Board;
 use model::piece::{pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
