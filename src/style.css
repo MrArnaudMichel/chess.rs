@@ -1,0 +1,11 @@
+/* style.css */
+
+button.light-square {
+    background: #EEEED2;
+    border-radius: 0;
+}
+
+button.dark-square {
+    background: #769656;
+    border-radius: 0;
+}
