@@ -39,7 +39,22 @@ impl ChessPiece for Knight {
     fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
         let current_pos = self.get_position();
         let side = self.get_side();
-
+        
+        if current_pos == destination {
+            return false;
+        }
+        
+        let dx = (destination.x - current_pos.x).abs();
+        let dy = (destination.y - current_pos.y).abs();
+        
+        if (dx == 2 && dy == 1) || (dx == 1 && dy == 2) {
+            if board.is_occupied(destination) == side as i8 {
+                println!("Destination occupied");
+                return false;
+            }
+            return true;
+        }
+        println!("Movement impossible car case non assignable");
         false
     }
 
