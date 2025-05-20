@@ -11,7 +11,7 @@ pub trait ChessPiece {
     fn piece_to_hex(&self) -> String;
 
     fn shift(&mut self, x: i8, y: i8) {
-        let pos = self.get_position_mut();
+        let pos: &mut Position = self.get_position_mut();
         pos.x = x;
         pos.y = y;
         self.get_piece_mut().mark_moved();
