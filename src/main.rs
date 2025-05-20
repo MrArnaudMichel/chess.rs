@@ -2,37 +2,42 @@ mod input;
 mod model;
 
 use model::board::board::Board;
-use model::piece::{pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen};
+use model::piece::{pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
 use input::input::input_turn;
+use crate::model::piece::piece::ChessPiece;
 
 fn main() {
     setup_game();
 }
 
-fn setup_game(){
+fn setup_game() {
     let mut board = Board::new();
 
+    // Place pawns
     for i in 0..8 {
         board.add_piece(Box::new(Pawn::new(i, 1, 0)));
         board.add_piece(Box::new(Pawn::new(i, 6, 1)));
     }
-    board.add_piece(Box::new(Rook::new(0, 0, 0)));
-    board.add_piece(Box::new(Rook::new(7, 0, 0)));
-    board.add_piece(Box::new(Rook::new(0, 7, 1)));
-    board.add_piece(Box::new(Rook::new(7, 7, 1)));
 
-    board.add_piece(Box::new(Bishop::new(2, 0, 0)));
-    board.add_piece(Box::new(Bishop::new(5, 0, 0)));
-    board.add_piece(Box::new(Bishop::new(2, 7, 1)));
-    board.add_piece(Box::new(Bishop::new(5, 7, 1)));
+    // Piece positions: (x, y, side)
+    let major_pieces: Vec<(&dyn Fn(i8, i8, u8) -> Box<dyn ChessPiece>, &[(i8, i8, u8)])> = vec![
+        // Rooks
+        (&|x, y, side| Box::new(Rook::new(x, y, side)), &[(0, 0, 0), (7, 0, 0), (0, 7, 1), (7, 7, 1)]),
+        // Bishops
+        (&|x, y, side| Box::new(Bishop::new(x, y, side)), &[(2, 0, 0), (5, 0, 0), (2, 7, 1), (5, 7, 1)]),
+        // Knights
+        (&|x, y, side| Box::new(Knight::new(x, y, side)), &[(1, 0, 0), (6, 0, 0), (1, 7, 1), (6, 7, 1)]),
+        // Queens
+        (&|x, y, side| Box::new(Queen::new(x, y, side)), &[(3, 0, 0), (3, 7, 1)]),
+        // Kings
+        (&|x, y, side| Box::new(King::new(x, y, side)), &[(4, 0, 0), (4, 7, 1)]),
+    ];
 
-    board.add_piece(Box::new(Knight::new(1, 0, 0)));
-    board.add_piece(Box::new(Knight::new(6, 0, 0)));
-    board.add_piece(Box::new(Knight::new(1, 7, 1)));
-    board.add_piece(Box::new(Knight::new(6, 7, 1)));
-
-    board.add_piece(Box::new(Queen::new(3, 0, 0)));
-    board.add_piece(Box::new(Queen::new(3, 7, 1)));
+    for (constructor, positions) in major_pieces.iter() {
+        for &(x, y, side) in *positions {
+            board.add_piece(constructor(x, y, side));
+        }
+    }
 
     let mut turn: u8 = 0;
 
