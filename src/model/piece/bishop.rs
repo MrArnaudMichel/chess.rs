@@ -76,7 +76,7 @@ impl ChessPiece for Bishop {
 
 
     fn display(&self) {
-        println!("Pawn {}", self.piece.to_string());
+        println!("Bishop {}", self.piece.to_string());
     }
 
 }

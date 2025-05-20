@@ -83,6 +83,6 @@ impl ChessPiece for Queen {
 
 
     fn display(&self) {
-        println!("Pawn {}", self.piece.to_string());
+        println!("Queen {}", self.piece.to_string());
     }
 }
