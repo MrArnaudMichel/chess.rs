@@ -1,40 +1,74 @@
 mod input;
 mod model;
 mod ui;
+mod app;
 
-use gtk4::prelude::*;
-use gtk4::{Application, ApplicationWindow};
-use ui::components::chessboard::ChessboardUI;
+use model::board::board::Board;
+use model::piece::{pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
+use input::input::input_turn;
+use crate::model::piece::piece::ChessPiece;
 
 fn main() {
-    // Create a new GTK application
-    let app = Application::new(
-        Some("com.example.chess"),
-        Default::default(),
-    );
-
-    // Connect to the activated signal
-    app.connect_activate(build_ui);
-
-    // Run the application
-    app.run();
+    setup_game();
+    app::run();
 }
 
-fn build_ui(app: &Application) {
-    // Load CSS for the chessboard
-    ChessboardUI::load_css();
+fn setup_game() {
+    let mut board = Board::new();
 
-    // Create the chessboard UI
-    let chessboard = ChessboardUI::new();
+    // Place pawns
+    for i in 0..8 {
+        board.add_piece(Box::new(Pawn::new(i, 1, 0)));
+        board.add_piece(Box::new(Pawn::new(i, 6, 1)));
+    }
 
-    // Create a window
-    let window = ApplicationWindow::new(app);
-    window.set_title(Some("Chess Game"));
-    window.set_default_size(600, 600);
+    // Piece positions: (x, y, side)
+    let major_pieces: Vec<(&dyn Fn(i8, i8, u8) -> Box<dyn ChessPiece>, &[(i8, i8, u8)])> = vec![
+        // Rooks
+        (&|x, y, side| Box::new(Rook::new(x, y, side)), &[(0, 0, 0), (7, 0, 0), (0, 7, 1), (7, 7, 1)]),
+        // Bishops
+        (&|x, y, side| Box::new(Bishop::new(x, y, side)), &[(2, 0, 0), (5, 0, 0), (2, 7, 1), (5, 7, 1)]),
+        // Knights
+        (&|x, y, side| Box::new(Knight::new(x, y, side)), &[(1, 0, 0), (6, 0, 0), (1, 7, 1), (6, 7, 1)]),
+        // Queens
+        (&|x, y, side| Box::new(Queen::new(x, y, side)), &[(3, 0, 0), (3, 7, 1)]),
+        // Kings
+        (&|x, y, side| Box::new(King::new(x, y, side)), &[(4, 0, 0), (4, 7, 1)]),
+    ];
 
-    // Add the chessboard to the window
-    window.set_child(Some(chessboard.widget()));
+    for (constructor, positions) in major_pieces.iter() {
+        for &(x, y, side) in *positions {
+            board.add_piece(constructor(x, y, side));
+        }
+    }
 
-    // Show the window
-    window.present();
+    let mut turn: u8 = 0;
+
+    println!("État initial de l'échiquier :");
+    board.display_all();
+
+    // while play_turn(&mut turn, &mut board) {
+    //     board.display_all();
+    // }
+}
+
+fn play_turn(turn: &mut u8, board: &mut Board) -> bool {
+    let mut mouv = input_turn();
+    let mut result = board.is_occupied(&mouv.0);
+
+    while result != *turn as i8 || !board.move_piece(mouv.0, mouv.1) {
+        if result != *turn as i8 {
+            println!("Aucune pièce ou ce n’est pas à vous de jouer.");
+        } else {
+            println!("La case n'est pas atteignable.");
+        }
+        mouv = input_turn();
+        result = board.is_occupied(&mouv.0);
+    }
+    next_turn(turn);
+    true
+}
+
+fn next_turn(turn: &mut u8){
+    *turn = (*turn + 1) %2
 }
