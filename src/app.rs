@@ -18,11 +18,14 @@ pub fn run(){
 }
 
 fn build_ui(app: &Application) {
+    let mut board = Board::new();
+    setup_game(&mut board);
+
     // Load CSS for the chessboard
     ChessboardUI::load_css();
 
     // Create the chessboard UI
-    let chessboard = ChessboardUI::new();
+    let chessboard = ChessboardUI::new(board);
 
     // Create a window
     let window = ApplicationWindow::new(app);
@@ -34,11 +37,9 @@ fn build_ui(app: &Application) {
 
     // Show the window
     window.present();
-    setup_game()
 }
 
-fn setup_game() {
-    let mut board = Board::new();
+fn setup_game(board: &mut Board) {
 
     // Place pawns
     for i in 0..8 {

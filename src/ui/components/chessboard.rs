@@ -1,12 +1,14 @@
 use gtk4::prelude::*;
 use gtk4::{Button, Grid, CssProvider, Image};
+use crate::model::board::board::Board;
 
 pub struct ChessboardUI {
     grid: Grid,
+    board: Board
 }
 
 impl ChessboardUI {
-    pub fn new() -> Self {
+    pub fn new(board: Board) -> Self {
         let grid = Grid::new();
         grid.set_row_homogeneous(true);
         grid.set_column_homogeneous(true);
@@ -23,15 +25,7 @@ impl ChessboardUI {
                 let class = if is_light { "light-square" } else { "dark-square" };
                 button.add_css_class(class);
 
-                // Add chess piece image if it's in the initial position
-                let y_coord = 7 - y; // Invert y-axis to match chess notation (0,0 is bottom-left)
-                let x_coord = x;
-
-                // Check if there should be a piece at this position
-                if let Some(piece_image_path) = Self::get_piece_image(x_coord, y_coord) {
-                    let image = Image::from_file(piece_image_path);
-                    button.set_child(Some(&image));
-                }
+                Self::update_image_button(y, x, &button);
 
                 // Store the coordinates for use in the click handler
                 let x_coord = x;
@@ -49,11 +43,24 @@ impl ChessboardUI {
             }
         }
 
-        Self { grid }
+        Self { grid, board }
+    }
+
+    fn update_image_button(y: i32, x: i32, button: &Button) {
+        // Add chess piece image if it's in the initial position
+        let y_coord = 7 - y; // Invert y-axis to match chess notation (0,0 is bottom-left)
+        let x_coord = x;
+
+        // Check if there should be a piece at this position
+        if let Some(piece_image_path) = Self::get_piece_image(x_coord, y_coord) {
+            let image = Image::from_file(piece_image_path);
+            button.set_child(Some(&image));
+        }
     }
 
     // Helper method to determine which piece image to use based on position
     fn get_piece_image(x: i32, y: i32) -> Option<String> {
+        println!("{}{}", x, y);
         match (x, y) {
             // Pawns
             (0..=7, 1) => Some("assets/images/wpawn.png".to_string()),
