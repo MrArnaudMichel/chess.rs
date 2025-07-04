@@ -1,14 +1,7 @@
 use gtk4::{Application, ApplicationWindow};
 use gtk4::prelude::{ApplicationExt, ApplicationExtManual, GtkWindowExt};
-use crate::app;
 use crate::model::board::board::Board;
-use crate::model::piece::bishop::Bishop;
-use crate::model::piece::king::King;
-use crate::model::piece::knight::Knight;
-use crate::model::piece::pawn::Pawn;
-use crate::model::piece::piece::ChessPiece;
-use crate::model::piece::queen::Queen;
-use crate::model::piece::rook::Rook;
+use crate::model::piece::{piece::ChessPiece, pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
 use crate::ui::components::chessboard::ChessboardUI;
 
 pub fn run(){
@@ -33,7 +26,7 @@ fn build_ui(app: &Application) {
 
     // Create a window
     let window = ApplicationWindow::new(app);
-    window.set_title(Some("Chess Game"));
+    window.set_title(Some("Chess Game Rust"));
     window.set_default_size(600, 600);
 
     // Add the chessboard to the window

@@ -69,6 +69,10 @@ impl ChessPiece for Bishop {
         false
     }
 
+    fn get_name(&self) -> String {
+        "bishop".to_string()
+    }
+
 
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'B')

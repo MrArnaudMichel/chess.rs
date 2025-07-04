@@ -5,5 +5,5 @@ edition = "2024"
 
 [dependencies]
 glib = "0.20.10"
-gtk4 = "0.9.6"
+gtk4 = "0.9.7"
 
