@@ -1,5 +1,4 @@
-pub(crate) use crate::model::piece::chess_piece::ChessPiece;
-pub(crate) use crate::model::structs::position::Position;
+use crate::model::structs::position::Position;
 
 pub struct Piece {
     position: Position,
@@ -16,14 +15,14 @@ impl Piece {
         }
     }
 
-    pub(crate) fn get_position(&self) -> &Position {
+    pub fn get_position(&self) -> &Position {
         &self.position
     }
 
-    pub(crate) fn get_position_mut(&mut self) -> &mut Position {
+    pub fn get_position_mut(&mut self) -> &mut Position {
         &mut self.position
     }
-    pub(crate) fn get_side(&self) -> u8 {
+    pub fn get_side(&self) -> u8 {
         self.side
     }
     pub fn to_string(&self) -> String {

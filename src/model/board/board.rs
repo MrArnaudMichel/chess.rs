@@ -1,4 +1,7 @@
-use crate::model::piece::piece::{ChessPiece, Position};
+use crate::model::structs::position::Position;
+use crate::model::piece::chess_piece::ChessPiece;
+
+
 pub struct Board {
     pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
 }

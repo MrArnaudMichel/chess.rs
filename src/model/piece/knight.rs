@@ -1,5 +1,7 @@
 use crate::model::board::board::Board;
-use super::piece::{ChessPiece, Piece, Position};
+use crate::model::piece::chess_piece::ChessPiece;
+use crate::model::structs::position::Position;
+use super::piece::{Piece};
 
 pub struct Knight {
     piece: Piece

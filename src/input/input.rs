@@ -1,5 +1,5 @@
 use std::io;
-use crate::model::piece::piece::Position;
+use crate::model::structs::position::Position;
 
 fn parse_chess_coord(coord: &str) -> Option<Position> {
     if coord.len() != 2 {

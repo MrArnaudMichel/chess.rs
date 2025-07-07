@@ -1,7 +1,7 @@
 use gtk4::{Application, ApplicationWindow};
 use gtk4::prelude::{ApplicationExt, ApplicationExtManual, GtkWindowExt};
 use crate::model::board::board::Board;
-use crate::model::piece::{piece::ChessPiece, pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
+use crate::model::piece::{chess_piece::ChessPiece, pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
 use crate::model::structs::position::Position;
 use crate::ui::components::chessboard::ChessboardUI;
 
@@ -74,7 +74,7 @@ fn setup_game(board: &mut Board) {
         }
     }
 
-    let mut turn: u8 = 0;
+    // let mut turn: u8 = 0;
 
     println!("État initial de l'échiquier :");
     board.display_all();
