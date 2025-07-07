@@ -1,95 +1,90 @@
+use std::rc::Rc;
+use glib::property::PropertyGet;
 use gtk4::prelude::*;
 use gtk4::{Button, Grid, CssProvider, Image};
 use crate::model::board::board::Board;
+use crate::model::structs::{position::Position, movement::Movement};
 
 pub struct ChessboardUI {
     grid: Grid,
-    board: Board
+    board: Board,
+    buttons: Vec<Vec<Button>>
 }
 
 impl ChessboardUI {
-    pub fn new(board: Board) -> Self {
+    pub fn new<F>(board: Board, callback: F) -> Self
+    where
+        F: Fn(Position) + 'static,
+    {
         let grid = Grid::new();
         grid.set_row_homogeneous(true);
         grid.set_column_homogeneous(true);
 
-        // Create the chessboard with 8x8 buttons
+        let mut buttons = vec![vec![Button::new(); 8]; 8];
+
+        // Wrapping the callback in an Rc to share it across buttons
+        let callback = Rc::new(callback);
+
         for y in 0..8 {
             for x in 0..8 {
                 let button = Button::new();
                 button.set_hexpand(true);
                 button.set_vexpand(true);
 
-                // Set the CSS class based on the square color
                 let is_light = (x + y) % 2 == 0;
                 let class = if is_light { "light-square" } else { "dark-square" };
                 button.add_css_class(class);
 
-                Self::update_image_button(y, x, &button);
-
-                // Store the coordinates for use in the click handler
                 let x_coord = x;
-                let y_coord = 7 - y; // Invert y-axis to match chess notation (0,0 is bottom-left)
+                let y_coord = 7 - y;
 
-                // Add click handler to print coordinates
+                let callback_clone = callback.clone(); // Clone Rc for move closure
                 button.connect_clicked(move |_| {
-                    let x_char = (b'A' + x_coord as u8) as char;
-                    let y_char = (b'1' + y_coord as u8) as char;
-                    println!("Clicked: ({}, {})", x_char, y_char);
+                    let position = Position::new(x_coord as i8, y_coord as i8);
+                    callback_clone(position);
                 });
 
-                // Add the button to the grid
                 grid.attach(&button, x, y, 1, 1);
+                buttons[y as usize][x as usize] = button;
             }
         }
 
-        Self { grid, board }
+        Self { grid, board, buttons }
     }
 
-    fn update_image_button(y: i32, x: i32, button: &Button) {
-        // Add chess piece image if it's in the initial position
-        let y_coord = 7 - y; // Invert y-axis to match chess notation (0,0 is bottom-left)
-        let x_coord = x;
+    pub fn update_image_button(movement: Movement) {
 
-        // Check if there should be a piece at this position
-        if let Some(piece_image_path) = Self::get_piece_image(x_coord, y_coord) {
-            let image = Image::from_file(piece_image_path);
-            button.set_child(Some(&image));
+    }
+
+    pub fn set_image_button(&self){
+        for x in 0..8 {
+            for y in [0, 1, 6, 7] {
+                if let Some(button) = self.get_button(x, y){
+                    if let Some(piece_image_path) = self.get_piece_image(x as i8, y as i8){
+                        let image = Image::from_file(piece_image_path);
+                        button.set_child(Some(&image));
+                    }
+                }
+            }
         }
     }
 
     // Helper method to determine which piece image to use based on position
-    fn get_piece_image(x: i32, y: i32) -> Option<String> {
-        println!("{}{}", x, y);
-        match (x, y) {
-            // Pawns
-            (0..=7, 1) => Some("assets/images/wpawn.png".to_string()),
-            (0..=7, 6) => Some("assets/images/bpawn.png".to_string()),
+    fn get_piece_image(&self, x: i8, y: i8) -> Option<String> {
+        let position: Position = Position::new(x, y);
+        if let Some(piece) = self.board.get_piece(&position) {
+            Option::from(piece.get_path_image())
+        } else { None }
+    }
 
-            // Rooks
-            (0, 0) | (7, 0) => Some("assets/images/wrook.png".to_string()),
-            (0, 7) | (7, 7) => Some("assets/images/brook.png".to_string()),
-
-            // Knights
-            (1, 0) | (6, 0) => Some("assets/images/wknight.png".to_string()),
-            (1, 7) | (6, 7) => Some("assets/images/bknight.png".to_string()),
-
-            // Bishops
-            (2, 0) | (5, 0) => Some("assets/images/wbishop.png".to_string()),
-            (2, 7) | (5, 7) => Some("assets/images/bbishop.png".to_string()),
-
-            // Queens
-            (3, 0) => Some("assets/images/wqueen.png".to_string()),
-            (3, 7) => Some("assets/images/bqueen.png".to_string()),
-
-            // Kings
-            (4, 0) => Some("assets/images/wking.png".to_string()),
-            (4, 7) => Some("assets/images/bking.png".to_string()),
-
-            // No piece at this position
-            _ => None,
+    pub fn get_button(&self, x: u8, y: u8) -> Option<&Button> {
+        if x < 8 && y < 8 {
+            Some(&self.buttons[7 - y as usize][x as usize])
+        } else {
+            None
         }
     }
+
 
     pub fn widget(&self) -> &Grid {
         &self.grid
