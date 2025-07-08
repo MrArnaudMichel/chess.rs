@@ -8,6 +8,12 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use crate::game_controller::GameController;
 
+/// Main function to run the GTK application
+/// This function initializes the GTK application, sets up the UI, and starts the event loop.
+/// # Arguments
+/// None
+/// # Returns
+/// None
 pub fn run(){
     // Create a new GTK application
     let app = Application::new(
@@ -21,6 +27,12 @@ pub fn run(){
     app.run();
 }
 
+/// Function to build the UI of the application
+/// This function sets up the chessboard UI, initializes the game controller, and creates the main application window.
+/// # Arguments
+/// * `app`: A reference to the GTK application.
+/// # Returns
+/// None
 fn build_ui(app: &Application) {
     // Crée un Board partagé
     let board = Rc::new(RefCell::new(Board::new()));
@@ -58,10 +70,6 @@ fn build_ui(app: &Application) {
 
     // Affiche la fenêtre
     window.present();
-}
-
-fn callback(position: Position){
-    println!("{position}");
 }
 
 fn setup_game(board: &mut Board) {

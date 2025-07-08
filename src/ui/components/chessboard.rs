@@ -52,6 +52,7 @@ impl ChessboardUI {
         Self { grid, board, buttons }
     }
 
+    
     pub fn update_image_button(&self, movement: Movement) {
         // Clear the image at the start position
         if let Some(button_start) = self.get_button(movement.get_start().x as u8, movement.get_start().y as u8) {
