@@ -12,14 +12,15 @@ impl Movement {
         Self { start, finish }
     }
 
+    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         format!("({}, {})", self.start.to_string(), self.finish.to_string())
     }
-    
+
     pub fn get_start(&self) -> Position {
         self.start.clone()
     }
-    
+
     pub fn get_finish(&self) -> Position {
         self.finish.clone()
     }

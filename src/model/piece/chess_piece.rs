@@ -6,6 +6,8 @@ pub trait ChessPiece {
     fn get_position(&self) -> &Position;
     fn get_position_mut(&mut self) -> &mut Position;
     fn get_piece_mut(&mut self) -> &mut Piece;
+
+    #[allow(dead_code)]
     fn get_piece(&self) -> &Piece;
     fn get_side(&self) -> u8;
     fn is_valid_move(&self, destination: &Position, board: &Board) -> bool;
