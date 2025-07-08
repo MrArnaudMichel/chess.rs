@@ -1,5 +1,5 @@
+use std::cell::RefCell;
 use std::rc::Rc;
-use glib::property::PropertyGet;
 use gtk4::prelude::*;
 use gtk4::{Button, Grid, CssProvider, Image};
 use crate::model::board::board::Board;
@@ -7,12 +7,12 @@ use crate::model::structs::{position::Position, movement::Movement};
 
 pub struct ChessboardUI {
     grid: Grid,
-    board: Board,
+    pub board: Rc<RefCell<Board>>,
     buttons: Vec<Vec<Button>>
 }
 
 impl ChessboardUI {
-    pub fn new<F>(board: Board, callback: F) -> Self
+    pub fn new<F>(board: Rc<RefCell<Board>>, callback: F) -> Self
     where
         F: Fn(Position) + 'static,
     {
@@ -52,8 +52,20 @@ impl ChessboardUI {
         Self { grid, board, buttons }
     }
 
-    pub fn update_image_button(movement: Movement) {
-
+    pub fn update_image_button(&self, movement: Movement) {
+        // Clear the image at the start position
+        if let Some(button_start) = self.get_button(movement.get_start().x as u8, movement.get_start().y as u8) {
+            button_start.set_child(None::<&gtk4::Widget>);
+        }
+        // Set the image at the end position if there is a piece
+        if let Some(button_end) = self.get_button(movement.get_finish().x as u8, movement.get_finish().y as u8) {
+            if let Some(piece_image_path) = self.get_piece_image(movement.get_finish().x, movement.get_finish().y) {
+                let image = Image::from_file(piece_image_path);
+                button_end.set_child(Some(&image));
+            } else {
+                button_end.set_child(None::<&gtk4::Widget>);
+            }
+        }
     }
 
     pub fn set_image_button(&self){
@@ -72,7 +84,7 @@ impl ChessboardUI {
     // Helper method to determine which piece image to use based on position
     fn get_piece_image(&self, x: i8, y: i8) -> Option<String> {
         let position: Position = Position::new(x, y);
-        if let Some(piece) = self.board.get_piece(&position) {
+        if let Some(piece) = self.board.borrow().get_piece(&position) {
             Option::from(piece.get_path_image())
         } else { None }
     }

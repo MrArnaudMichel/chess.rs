@@ -4,6 +4,9 @@ use crate::model::board::board::Board;
 use crate::model::piece::{chess_piece::ChessPiece, pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
 use crate::model::structs::position::Position;
 use crate::ui::components::chessboard::ChessboardUI;
+use std::cell::RefCell;
+use std::rc::Rc;
+use crate::game_controller::GameController;
 
 pub fn run(){
     // Create a new GTK application
@@ -19,26 +22,41 @@ pub fn run(){
 }
 
 fn build_ui(app: &Application) {
-    let mut board = Board::new();
-    setup_game(&mut board);
+    // Crée un Board partagé
+    let board = Rc::new(RefCell::new(Board::new()));
+    setup_game(&mut board.borrow_mut());
 
-    // Load CSS for the chessboard
+    // Charge le CSS
     ChessboardUI::load_css();
 
-    // Create the chessboard UI
-    let chessboard = ChessboardUI::new(board, callback);
+    // On va créer le GameController dans une RefCell pour pouvoir le muter dans le callback
+    let controller_ref = Rc::new(RefCell::new(None::<GameController>));
+    let board_clone = board.clone();
+    let controller_ref_clone = controller_ref.clone();
+
+    // Crée le ChessboardUI avec un callback qui appelle le contrôleur
+    let chessboard = ChessboardUI::new(board_clone, move |pos: Position| {
+        if let Some(ref mut controller) = *controller_ref_clone.borrow_mut() {
+            controller.on_square_clicked(pos);
+        }
+    });
 
     chessboard.set_image_button();
 
-    // Create a window
+    // Crée le contrôleur et le stocke dans le Rc<RefCell<Option<...>>>
+    *controller_ref.borrow_mut() = Some(GameController::new(board.clone(), chessboard));
+    let controller = controller_ref.borrow();
+    let chessboard_ref = &controller.as_ref().unwrap().ui;
+
+    // Crée la fenêtre
     let window = ApplicationWindow::new(app);
     window.set_title(Some("Chess Game Rust"));
     window.set_default_size(600, 600);
 
-    // Add the chessboard to the window
-    window.set_child(Some(chessboard.widget()));
+    // Ajoute l'échiquier à la fenêtre
+    window.set_child(Some(chessboard_ref.widget()));
 
-    // Show the window
+    // Affiche la fenêtre
     window.present();
 }
 
