@@ -57,6 +57,7 @@ impl ChessboardUI {
         // Clear the image at the start position
         if let Some(button_start) = self.get_button(movement.get_start().x as u8, movement.get_start().y as u8) {
             button_start.set_child(None::<&gtk4::Widget>);
+            button_start.remove_css_class("selected");
         }
         // Set the image at the end position if there is a piece
         if let Some(button_end) = self.get_button(movement.get_finish().x as u8, movement.get_finish().y as u8) {
@@ -79,6 +80,17 @@ impl ChessboardUI {
                     }
                 }
             }
+        }
+    }
+
+    /// Sets the selected button with a CSS class to indicate selection
+    ///
+    /// **Parameters**
+    /// - `position`: The position of the button to be selected.
+    /// **Note**: This method assumes that the button exists at the given position.
+    pub fn set_selected_button(&self, position: &Position) {
+        if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
+            button.add_css_class("selected");
         }
     }
 

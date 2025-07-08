@@ -34,6 +34,7 @@ impl GameController {
             // Premier clic : sélection
             // Vérifie qu'il y a bien une pièce à cette position
             if self.board.borrow().get_piece(&pos).is_some() {
+                self.ui.set_selected_button(&pos);
                 self.selected_position = Some(pos);
             }
         }

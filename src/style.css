@@ -9,3 +9,9 @@ button.dark-square {
     background: #769656;
     border-radius: 0;
 }
+
+button.selected {
+    background: #F5F580;
+    color: #000;
+
+}
