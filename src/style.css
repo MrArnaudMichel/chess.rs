@@ -15,7 +15,5 @@ button.selected {
 }
 
 button.valid-move {
-    /* Visual highlight for available moves, e.g. a border or background */
-    border: 2px solid #333;
-    /* You can adjust this or add a subtle background if desired */
+
 }
