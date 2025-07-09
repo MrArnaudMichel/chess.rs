@@ -17,7 +17,7 @@ use crate::game_controller::GameController;
 pub fn run(){
     // Create a new GTK application
     let app = Application::new(
-        Some("com.example.chess"),
+        Some("Chess Rust"),
         Default::default(),
     );
 
