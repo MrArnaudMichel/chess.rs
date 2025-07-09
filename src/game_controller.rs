@@ -10,6 +10,7 @@ pub struct GameController {
     pub ui: ChessboardUI,
     pub selected_position: Option<Position>,
     turn : bool, // true for white's turn, false for black
+    available_moves: Vec<Position>, // Liste des mouvements valides pour la pièce sélectionnée
 }
 
 impl GameController {
@@ -19,35 +20,34 @@ impl GameController {
             ui,
             selected_position: None,
             turn: true,
+            available_moves: Vec::new(),
         }
     }
 
     pub fn on_square_clicked(&mut self, pos: Position) {
 
         if let Some(selected) = self.selected_position.take() {
-            println!("Selected position: {}", selected.to_string());
             // Deuxième clic : tentative de déplacement
             if selected != pos {
                 let moved = self.board.borrow_mut().move_piece(selected.clone(), pos.clone());
                 if moved {
-                    println!("Moved: {}", moved);
                     // Met à jour l'UI
                     self.ui.update_image_button(Movement::new(selected, pos));
+                    self.clear_ui_buttons();
                     // Change le tour
                     self.turn = !self.turn;
                 } else {
                     println!("Move failed, clearing selection.");
                     self.ui.clear_selected_button(&selected);
-                    self.selected_position = None;
+                    self.clear_ui_buttons();
                 }
             } else {
                 println!("Clicked on the same position, deselecting.");
                 // Si le même bouton est cliqué, on désélectionne
                 self.ui.clear_selected_button(&pos);
-                self.selected_position = None;
+                self.clear_ui_buttons();
             }
         } else {
-            println!("First click on position: {}", pos.to_string());
             // Premier clic : sélection
             // Vérifie qu'il y a bien une pièce à cette position
             if let Some(piece) = self.board.borrow().get_piece(&pos) {
@@ -57,7 +57,25 @@ impl GameController {
                 }
                 self.ui.set_selected_button(&pos);
                 self.selected_position = Some(pos);
+                self.available_moves = piece.all_valid_moves(&self.board.borrow());
+                if self.available_moves.is_empty() {
+                    println!("No valid moves available for this piece.");
+                    // self.ui.clear_selected_button(&pos);
+                    self.selected_position = None;
+                } else {
+                    // Affiche les mouvements valides
+                    for move_pos in self.available_moves.clone() {
+                        self.ui.highlight_valid_move(&move_pos);
+                    }
+                }
             }
+        }
+    }
+
+    fn clear_ui_buttons(&mut self) {
+        self.selected_position = None;
+        for move_pos in self.available_moves.clone() {
+            self.ui.clear_highlighted_moves_for_position(&move_pos);
         }
     }
 }

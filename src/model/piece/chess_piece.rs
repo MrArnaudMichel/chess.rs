@@ -12,6 +12,18 @@ pub trait ChessPiece {
     fn get_side(&self) -> u8;
     fn is_valid_move(&self, destination: &Position, board: &Board) -> bool;
 
+    fn all_valid_moves(&self, board: &Board) -> Vec<Position> {
+        let mut valid_moves = Vec::new();
+        for x in 0..8 {
+            for y in 0..8 {
+                let destination = Position::new(x as i8, y as i8);
+                if self.is_valid_move(&destination, board) {
+                    valid_moves.push(destination);
+                }
+            }
+        }
+        valid_moves
+    }
     fn get_name(&self) -> String;
     fn piece_to_hex(&self) -> String;
 

@@ -49,7 +49,7 @@ impl ChessPiece for King {
         let dx = (destination.x - current_pos.x).abs();
         let dy = (destination.y - current_pos.y).abs();
 
-        if dx <= 1 || dy <= 1 {
+        if dx <= 1 && dy <= 1 {
             if board.is_occupied(destination) == side as i8 {
                 println!("Destination occupied");
                 return false;

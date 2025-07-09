@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use gtk4::prelude::*;
-use gtk4::{Button, Grid, CssProvider, Image};
+use gtk4::{Button, Grid, CssProvider, Image, DrawingArea};
 use crate::model::board::board::Board;
 use crate::model::structs::{position::Position, movement::Movement};
 
@@ -93,10 +93,56 @@ impl ChessboardUI {
             button.add_css_class("selected");
         }
     }
-    
+
     pub fn clear_selected_button(&self, position: &Position) {
         if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
             button.remove_css_class("selected");
+        }
+    }
+
+    fn create_dot_widget() -> DrawingArea {
+        let area = DrawingArea::new();
+        area.set_content_width(20);
+        area.set_content_height(20);
+        area.set_draw_func(move |_, cr, w, h| {
+            let radius = f64::min(w as f64, h as f64) / 6.0;
+            cr.set_source_rgba(0.1, 0.1, 0.1, 0.7);
+            cr.arc((w as f64) / 2.0, (h as f64) / 2.0, radius, 0.0, 2.0 * std::f64::consts::PI);
+            cr.fill().unwrap();
+        });
+        area
+    }
+
+    pub fn highlight_valid_move(&self, position: &Position) {
+        if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
+            button.add_css_class("valid-move");
+            // Only add dot if no piece image is present
+            if button.child().is_none() {
+                let dot = Self::create_dot_widget();
+                button.set_child(Some(&dot));
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn clear_highlighted_moves(&self) {
+        for row in &self.buttons {
+            for button in row {
+                button.remove_css_class("valid-move");
+            }
+        }
+    }
+
+    pub fn clear_highlighted_moves_for_position(&self, position: &Position) {
+        if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
+            button.remove_css_class("valid-move");
+            // Remove dot if present and no piece image should be there
+            if let Some(child) = button.child() {
+                // If the child is a DrawingArea, remove it
+                if child.is::<DrawingArea>() {
+                    button.set_child(None::<&gtk4::Widget>);
+                }
+            }
         }
     }
 
