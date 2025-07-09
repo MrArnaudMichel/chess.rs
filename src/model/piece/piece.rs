@@ -2,7 +2,7 @@ use crate::model::structs::position::Position;
 
 pub struct Piece {
     position: Position,
-    side: u8,
+    side: u8, // 0 for white, 1 for black
     has_moved: bool
 }
 

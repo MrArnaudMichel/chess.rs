@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Position {
     pub(crate) x: i8,
     pub(crate) y: i8,

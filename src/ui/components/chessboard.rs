@@ -93,6 +93,12 @@ impl ChessboardUI {
             button.add_css_class("selected");
         }
     }
+    
+    pub fn clear_selected_button(&self, position: &Position) {
+        if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
+            button.remove_css_class("selected");
+        }
+    }
 
     // Helper method to determine which piece image to use based on position
     fn get_piece_image(&self, x: i8, y: i8) -> Option<String> {
