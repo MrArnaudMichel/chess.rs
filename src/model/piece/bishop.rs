@@ -56,14 +56,21 @@ impl ChessPiece for Bishop {
         let mut y = current_pos.y + step_y;
 
         while x != destination.x && y != destination.y {
+            // Prevent out-of-bounds access
+            if x < 0 || x >= 8 || y < 0 || y >= 8 {
+                return false;
+            }
             if board.is_occupied(&Position::new(x, y)) >= 0 {
                 return false;
             }
-
             x += step_x;
             y += step_y;
         }
 
+        // Check destination is on board
+        if destination.x < 0 || destination.x >= 8 || destination.y < 0 || destination.y >= 8 {
+            return false;
+        }
         let value = board.is_occupied(&Position::new(destination.x, destination.y));
         if value == ((side ^ 1) as i8) || value == -1 {
             return true;

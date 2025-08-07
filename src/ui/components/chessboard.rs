@@ -82,12 +82,7 @@ impl ChessboardUI {
             }
         }
     }
-
-    /// Sets the selected button with a CSS class to indicate selection
-    ///
-    /// **Parameters**
-    /// - `position`: The position of the button to be selected.
-    /// **Note**: This method assumes that the button exists at the given position.
+    
     pub fn set_selected_button(&self, position: &Position) {
         if let Some(button) = self.get_button(position.x as u8, position.y as u8) {
             button.add_css_class("selected");
@@ -109,20 +104,6 @@ impl ChessboardUI {
             cr.set_source_rgba(0.1, 0.1, 0.1, 0.7);
             cr.arc((w as f64) / 2.0, (h as f64) / 2.0, radius, 0.0, 2.0 * std::f64::consts::PI);
             cr.fill().unwrap();
-        });
-        area
-    }
-
-    fn create_capture_circle_widget() -> DrawingArea {
-        let area = DrawingArea::new();
-        area.set_content_width(60);
-        area.set_content_height(60);
-        area.set_draw_func(move |_, cr, w, h| {
-            let radius = f64::min(w as f64, h as f64) / 2.0 - 4.0;
-            cr.set_source_rgba(0.1, 0.6, 0.1, 0.7); // Vert translucide
-            cr.set_line_width(5.0);
-            cr.arc((w as f64) / 2.0, (h as f64) / 2.0, radius, 0.0, 2.0 * std::f64::consts::PI);
-            cr.stroke().unwrap();
         });
         area
     }

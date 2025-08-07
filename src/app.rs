@@ -1,3 +1,8 @@
+//! Application entry point and UI setup for the Chess game.
+//!
+//! This module initializes the GTK application, sets up the chessboard UI,
+//! and manages the game controller and board state.
+
 use gtk4::{Application, ApplicationWindow};
 use gtk4::prelude::{ApplicationExt, ApplicationExtManual, GtkWindowExt};
 use crate::model::board::board::Board;
@@ -8,16 +13,14 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use crate::game_controller::GameController;
 
-/// Main function to run the GTK application
-/// This function initializes the GTK application, sets up the UI, and starts the event loop.
-/// # Arguments
-/// None
-/// # Returns
-/// None
+/// Runs the GTK application.
+///
+/// Initializes the application, connects the activation signal,
+/// and starts the main event loop.
 pub fn run(){
     // Create a new GTK application
     let app = Application::new(
-        Some("Chess Rust"),
+        Some("fr.arnaudmichel.ChessRust"),
         Default::default(),
     );
 
@@ -27,12 +30,14 @@ pub fn run(){
     app.run();
 }
 
-/// Function to build the UI of the application
-/// This function sets up the chessboard UI, initializes the game controller, and creates the main application window.
+/// Builds the main UI when the application is activated.
+///
+/// Creates the main window, initializes the board and controller,
+/// and sets up the chessboard UI.
+///
 /// # Arguments
-/// * `app`: A reference to the GTK application.
-/// # Returns
-/// None
+///
+/// * `app` - The GTK application instance.
 fn build_ui(app: &Application) {
     // Crée un Board partagé
     let board = Rc::new(RefCell::new(Board::new()));
@@ -72,6 +77,13 @@ fn build_ui(app: &Application) {
     window.present();
 }
 
+/// Sets up the initial chess game state on the board.
+///
+/// Places all pieces in their starting positions.
+///
+/// # Arguments
+///
+/// * `board` - A mutable reference to the `Board` to initialize.
 fn setup_game(board: &mut Board) {
 
     // Place pawns
@@ -100,7 +112,6 @@ fn setup_game(board: &mut Board) {
         }
     }
 
-    // let mut turn: u8 = 0;
 
     println!("État initial de l'échiquier :");
     board.display_all();

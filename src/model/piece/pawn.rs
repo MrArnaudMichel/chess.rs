@@ -83,8 +83,6 @@ impl ChessPiece for Pawn {
             }
             return true;
         }
-
-        println!("Mouvement invalide pour un pion.");
         false
     }
 
