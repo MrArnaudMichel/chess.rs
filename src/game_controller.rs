@@ -27,15 +27,16 @@ impl GameController {
     pub fn on_square_clicked(&mut self, pos: Position) {
 
         if let Some(selected) = self.selected_position.take() {
-            // Deuxième clic : tentative de déplacement
+            // Second clic : try to move
             if selected != pos {
                 let moved = self.board.borrow_mut().move_piece(selected.clone(), pos.clone());
                 if moved {
-                    // Met à jour l'UI
+                    // Update the UI with the movement
                     self.ui.update_image_button(Movement::new(selected, pos));
                     self.clear_ui_buttons();
-                    // Change le tour
+                    // Change the turn
                     self.turn = !self.turn;
+                    println!("Check if the king is in check after the move.");
                 } else {
                     println!("Move failed, clearing selection.");
                     self.ui.clear_selected_button(&selected);
@@ -43,27 +44,27 @@ impl GameController {
                 }
             } else {
                 println!("Clicked on the same position, deselecting.");
-                // Si le même bouton est cliqué, on désélectionne
+                // Deselect the piece if the same position is clicked
                 self.ui.clear_selected_button(&pos);
                 self.clear_ui_buttons();
             }
         } else {
-            // Premier clic : sélection
-            // Vérifie qu'il y a bien une pièce à cette position
+            // First click : select a piece
+            // Check if the position is valid and if the piece belongs to the current player
             if let Some(piece) = self.board.borrow().get_piece(&pos) {
                 if piece.get_piece().get_side() != if self.turn { 0 } else { 1 } {
                     println!("It's not your turn to move this piece.");
                     return;
                 }
-                self.ui.set_selected_button(&pos);
-                self.selected_position = Some(pos);
                 self.available_moves = piece.all_valid_moves(&self.board.borrow());
                 if self.available_moves.is_empty() {
                     println!("No valid moves available for this piece.");
-                    // self.ui.clear_selected_button(&pos);
+                    self.ui.clear_selected_button(&pos);
                     self.selected_position = None;
                 } else {
-                    // Affiche les mouvements valides
+                    self.ui.set_selected_button(&pos);
+                    self.selected_position = Some(pos);
+                    // Highlight the available moves in the UI
                     for move_pos in self.available_moves.clone() {
                         self.ui.highlight_valid_move(&move_pos);
                     }
