@@ -10,7 +10,7 @@ pub struct GameController {
     pub ui: ChessboardUI,
     pub selected_position: Option<Position>,
     turn : bool, // true for white's turn, false for black
-    available_moves: Vec<Position>, // Liste des mouvements valides pour la pièce sélectionnée
+    available_moves: Vec<Position>, // All valid moves for the selected piece
 }
 
 impl GameController {
@@ -27,7 +27,7 @@ impl GameController {
     pub fn on_square_clicked(&mut self, pos: Position) {
 
         if let Some(selected) = self.selected_position.take() {
-            // Second clic : try to move
+            // Second click: try to move
             if selected != pos {
                 let moved = self.board.borrow_mut().move_piece(selected.clone(), pos.clone());
                 if moved {
@@ -37,6 +37,7 @@ impl GameController {
                     // Change the turn
                     self.turn = !self.turn;
                     println!("Check if the king is in check after the move.");
+                    println!("{}", self.board.borrow_mut().is_checked(!self.turn as u8, None));
                 } else {
                     println!("Move failed, clearing selection.");
                     self.ui.clear_selected_button(&selected);
@@ -49,13 +50,18 @@ impl GameController {
                 self.clear_ui_buttons();
             }
         } else {
-            // First click : select a piece
+            // First click: select a piece
             // Check if the position is valid and if the piece belongs to the current player
-            if let Some(piece) = self.board.borrow().get_piece(&pos) {
+            let board = self.board.borrow();
+            if let Some(piece) = board.get_piece(&pos) {
                 if piece.get_piece().get_side() != if self.turn { 0 } else { 1 } {
                     println!("It's not your turn to move this piece.");
                     return;
                 }
+                // else if board.is_checked(!self.turn as u8, None) && piece.get_name() != "king" {
+                //     println!("You cannot move a piece while your king is in check.");
+                //     return;
+                // }
                 self.available_moves = piece.all_valid_moves(&self.board.borrow());
                 if self.available_moves.is_empty() {
                     println!("No valid moves available for this piece.");

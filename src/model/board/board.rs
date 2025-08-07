@@ -87,4 +87,50 @@ impl Board {
             println!("Aucune pièce trouvée à la position ({}, {})", from.x, from.y);
         }
     }
+
+    pub fn is_checked(&self, side: u8, position: Option<Position>) -> bool {
+        let mut king_position: Option<Position> = position;
+
+        if king_position.is_none() {
+            // Step 1: Locate the king's position
+            'outer: for y in 0..8 {
+                for x in 0..8 {
+                    if let Some(piece) = &self.pieces[y][x] {
+                        if piece.get_side() == side && piece.get_name().to_lowercase() == "king" {
+                            king_position = Some(Position::new(x as i8, y as i8));
+                            break 'outer;
+                        }
+                    }
+                }
+            }
+        }
+
+        // If no king is found, return false (king is not in check)
+        let king_pos = match king_position {
+            Some(pos) => pos,
+            None => {
+                println!("No king found for side {}!", side);
+                return false;
+            }
+        };
+
+        // Step 2: Check for threats from enemy pieces
+        for y in 0..8 {
+            for x in 0..8 {
+                if let Some(piece) = &self.pieces[y][x] {
+                    // If the piece is from the opposing side
+                    if piece.get_side() != side {
+                        // Check if the piece threatens the king's position
+                        if piece.is_valid_move(&king_pos, self) {
+                            println!("King is in check by a {} at ({}, {})", piece.get_name(), x, y);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // No threats found, king is not in check
+        false
+    }
 }

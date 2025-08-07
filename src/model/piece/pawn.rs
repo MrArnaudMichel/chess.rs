@@ -50,17 +50,12 @@ impl ChessPiece for Pawn {
         if dx.abs() == 1 && dy == dir {
             if board.is_occupied(destination) == ((side ^ 1) as i8) {
                 return true;
-            } else if board.is_occupied(destination) == side as i8{
-                println!("Impossible de capturer une pièce alliée.");
-            } else {
-                println!("Aucune pièce à capturer sur la diagonale.");
             }
             return false;
         }
 
         if dx == 0 && dy == dir {
             if board.is_occupied(destination) >= 0 {
-                println!("Case devant occupée.");
                 return false;
             }
             return true;
@@ -68,17 +63,14 @@ impl ChessPiece for Pawn {
 
         if dx == 0 && dy == 2 * dir {
             if self.piece.has_moved() {
-                println!("Ce pion a déjà bougé, il ne peut avancer de deux cases.");
                 return false;
             }
 
             let intermediate = Position::new(current_pos.x, current_pos.y + dir);
             if board.is_occupied(&intermediate) >= 0{
-                println!("La case intermédiaire est occupée.");
                 return false;
             }
             if board.is_occupied(destination) >= 0{
-                println!("La case de destination est occupée.");
                 return false;
             }
             return true;

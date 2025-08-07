@@ -51,12 +51,10 @@ impl ChessPiece for King {
 
         if dx <= 1 && dy <= 1 {
             if board.is_occupied(destination) == side as i8 {
-                println!("Destination occupied");
                 return false;
             }
             return true;
         }
-        println!("Movement impossible car case non assignable");
         false
     }
 

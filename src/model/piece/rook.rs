@@ -43,12 +43,10 @@ impl ChessPiece for Rook {
         let side = self.get_side();
 
         if current_pos == destination || (current_pos.x != destination.x && current_pos.y != destination.y) {
-            println!("Movement impossible car case non assignable ou case = current");
             return false;
         }
 
         if board.is_occupied(destination) == side as i8 {
-            println!("Destination occupied");
             return false;
         }
 
