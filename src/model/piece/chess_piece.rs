@@ -28,7 +28,8 @@ pub trait ChessPiece {
     fn piece_to_hex(&self) -> String;
 
     fn get_path_image(&self) -> String {
-        format!("assets/images/{}{}.png", if self.get_side() == 0 {'w'} else {'b'}, self.get_name())
+        // format!("assets/images/{}{}.png", if self.get_side() == 0 {'w'} else {'b'}, self.get_name())
+        format!("assets/images/{}.png", self.piece_to_hex().to_lowercase())
     }
 
     fn shift(&mut self, x: i8, y: i8) {

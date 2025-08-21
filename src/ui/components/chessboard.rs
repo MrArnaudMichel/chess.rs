@@ -1,14 +1,21 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use gtk4::prelude::*;
-use gtk4::{Button, Grid, CssProvider, Image, DrawingArea};
+use gtk4::{Button, Grid, CssProvider, Image, DrawingArea, ListBox, Label};
 use crate::model::board::board::Board;
 use crate::model::structs::{position::Position, movement::Movement};
 
 pub struct ChessboardUI {
     grid: Grid,
     pub board: Rc<RefCell<Board>>,
-    buttons: Vec<Vec<Button>>
+    buttons: Vec<Vec<Button>>,
+    // Optional UI elements for the side panel (moves, info)
+    move_list: Option<ListBox>,
+    turn_label: Option<Label>,
+    info_label: Option<Label>,
+    // Timer labels
+    white_timer_label: Option<Label>,
+    black_timer_label: Option<Label>,
 }
 
 impl ChessboardUI {
@@ -49,7 +56,7 @@ impl ChessboardUI {
             }
         }
 
-        Self { grid, board, buttons }
+        Self { grid, board, buttons, move_list: None, turn_label: None, info_label: None, white_timer_label: None, black_timer_label: None }
     }
 
     
@@ -161,6 +168,72 @@ impl ChessboardUI {
 
     pub fn widget(&self) -> &Grid {
         &self.grid
+    }
+
+    // Side panel wiring: provide widgets from outside
+    pub fn set_side_panel_widgets(&mut self, move_list: ListBox, turn_label: Label, info_label: Label) {
+        self.move_list = Some(move_list);
+        self.turn_label = Some(turn_label);
+        self.info_label = Some(info_label);
+    }
+
+    fn pos_to_alg(pos: &Position) -> String {
+        let file = (b'a' + (pos.x as u8)) as char;
+        let rank = (pos.y + 1) as i8; // y is 0..7, rank is 1..8
+        format!("{}{}", file, rank)
+    }
+
+    pub fn append_move_entry(&self, start: &Position, end: &Position, move_number: usize) {
+        if let Some(list) = &self.move_list {
+            let text = format!("{}. {}-{}", (move_number + 1), Self::pos_to_alg(start), Self::pos_to_alg(end));
+            let row = gtk4::ListBoxRow::new();
+            let label = Label::new(Some(&text));
+            label.set_xalign(0.0);
+            row.set_child(Some(&label));
+            list.append(&row);
+        }
+    }
+
+    pub fn set_turn_label(&self, white_to_move: bool) {
+        if let Some(label) = &self.turn_label {
+            label.set_text(if white_to_move { "Au trait: Blancs" } else { "Au trait: Noirs" });
+        }
+    }
+
+    pub fn set_info_text(&self, text: &str) {
+        if let Some(label) = &self.info_label {
+            label.set_text(text);
+        }
+    }
+
+    pub fn refresh_squares(&self, positions: &[Position]) {
+        for pos in positions {
+            if let Some(button) = self.get_button(pos.x as u8, pos.y as u8) {
+                if let Some(piece_image_path) = self.get_piece_image(pos.x, pos.y) {
+                    let image = Image::from_file(piece_image_path);
+                    button.set_child(Some(&image));
+                } else {
+                    button.set_child(None::<&gtk4::Widget>);
+                }
+                button.remove_css_class("selected");
+                button.remove_css_class("valid-move");
+            }
+        }
+    }
+
+    pub fn set_timer_labels(&mut self, white_label: Label, black_label: Label) {
+        self.white_timer_label = Some(white_label);
+        self.black_timer_label = Some(black_label);
+    }
+
+    pub fn update_timer_labels(&self, white_secs: i32, black_secs: i32) {
+        fn fmt(secs: i32) -> String {
+            let m = secs.max(0) / 60;
+            let s = secs.max(0) % 60;
+            format!("{:02}:{:02}", m, s)
+        }
+        if let Some(l) = &self.white_timer_label { l.set_text(&fmt(white_secs)); }
+        if let Some(l) = &self.black_timer_label { l.set_text(&fmt(black_secs)); }
     }
 
     pub fn load_css() {

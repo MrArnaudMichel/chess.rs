@@ -1,19 +1,61 @@
 /* style.css */
 
+/* Board squares */
 button.light-square {
     background: #EEEED2;
     border-radius: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
 }
 
 button.dark-square {
     background: #769656;
     border-radius: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
 }
 
 button.selected {
     background: #F5F580;
 }
 
-button.valid-move {
+button.valid-move { }
 
+/* Sidebar panel for moves */
+.panel {
+    background: rgba(255,255,255,0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 8px;
+}
+
+.sidebar { padding: 8px; }
+
+.timer-label {
+    font-weight: 600;
+}
+
+/* Home page styling */
+.home-container {
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 24px;
+    background: rgba(255,255,255,0.3);
+    border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.home-button {
+    min-width: 200px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+}
+switch {
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    position: relative;
 }

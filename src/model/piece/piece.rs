@@ -37,5 +37,9 @@ impl Piece {
     pub fn has_moved(&self) -> bool {
         self.has_moved
     }
+
+    pub fn set_has_moved(&mut self, val: bool) {
+        self.has_moved = val;
+    }
 }
 

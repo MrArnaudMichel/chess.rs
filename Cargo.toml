@@ -6,4 +6,5 @@ edition = "2024"
 [dependencies]
 glib = "0.20.12"
 gtk4 = "0.9.7"
+adw = { package = "libadwaita", version = "0.7" }
 

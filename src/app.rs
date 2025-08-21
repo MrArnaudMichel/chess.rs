@@ -4,20 +4,26 @@
 //! and manages the game controller and board state.
 
 use gtk4::{Application, ApplicationWindow};
-use gtk4::prelude::{ApplicationExt, ApplicationExtManual, GtkWindowExt};
+use gtk4::prelude::*;
 use crate::model::board::board::Board;
 use crate::model::piece::{chess_piece::ChessPiece, pawn::Pawn, bishop::Bishop, knight::Knight, rook::Rook, queen::Queen, king::King};
 use crate::model::structs::position::Position;
 use crate::ui::components::chessboard::ChessboardUI;
+use crate::ui::controllers::{home::HomeController, game_page::GamePageController, settings::SettingsController};
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::game_controller::GameController;
+use crate::ui::controllers::game_controller::GameController;
+use adw::prelude::*;
 
 /// Runs the GTK application.
 ///
 /// Initializes the application, connects the activation signal,
 /// and starts the main event loop.
 pub fn run(){
+    // Initialize Adwaita
+    let _ = adw::init();
+    adw::StyleManager::default().set_color_scheme(adw::ColorScheme::Default);
+
     // Create a new GTK application
     let app = Application::new(
         Some("fr.arnaudmichel.chess-rs"),
@@ -39,6 +45,7 @@ pub fn run(){
 ///
 /// * `app` - The GTK application instance.
 fn build_ui(app: &Application) {
+    use gtk4::{HeaderBar, Stack, StackSwitcher};
     // Crée un Board partagé
     let board = Rc::new(RefCell::new(Board::new()));
     setup_game(&mut board.borrow_mut());
@@ -62,18 +69,52 @@ fn build_ui(app: &Application) {
 
     // Crée le contrôleur et le stocke dans le Rc<RefCell<Option<...>>>
     *controller_ref.borrow_mut() = Some(GameController::new(board.clone(), chessboard));
-    let controller = controller_ref.borrow();
-    let chessboard_ref = &controller.as_ref().unwrap().ui;
-
-    // Crée la fenêtre
+    // Build UI pages with a Stack
     let window = ApplicationWindow::new(app);
     window.set_title(Some("Chess Game Rust"));
-    window.set_default_size(600, 600);
+    // Enforce 16:9 default size
+    window.set_default_size(1280, 720);
+    // Allow resizing so the board can take all remaining space
+    window.set_resizable(true);
 
-    // Ajoute l'échiquier à la fenêtre
-    window.set_child(Some(chessboard_ref.widget()));
+    // Header with switcher
+    let header = HeaderBar::new();
+    let switcher = StackSwitcher::new();
+    let stack = Stack::new();
+    switcher.set_stack(Some(&stack));
+    header.set_title_widget(Some(&switcher));
+    window.set_titlebar(Some(&header));
 
-    // Affiche la fenêtre
+    // HOME PAGE (controller)
+    let home = HomeController::new();
+    stack.add_titled(home.root(), Some("home"), "Accueil");
+
+    // GAME PAGE (controller)
+    let game_page = GamePageController::new(controller_ref.clone());
+    stack.add_titled(game_page.root(), Some("game"), "Jeu");
+
+    // SETTINGS PAGE (controller)
+    let settings = SettingsController::new();
+    stack.add_titled(settings.root(), Some("settings"), "Paramètres");
+
+    // Hook up home buttons
+    {
+        let stack_clone = stack.clone();
+        home.btn_play.connect_clicked(move |_| {
+            stack_clone.set_visible_child_name("game");
+        });
+    }
+    {
+        let stack_clone = stack.clone();
+        home.btn_settings.connect_clicked(move |_| {
+            stack_clone.set_visible_child_name("settings");
+        });
+    }
+
+    // Set initial page to home
+    stack.set_visible_child_name("home");
+
+    window.set_child(Some(&stack));
     window.present();
 }
 

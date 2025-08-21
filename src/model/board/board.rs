@@ -88,6 +88,31 @@ impl Board {
         }
     }
 
+    /// Apply a move without validation and return any captured piece.
+    pub fn apply_move_unchecked(&mut self, from: Position, to: Position) -> Option<Box<dyn ChessPiece>> {
+        let (to_x, to_y) = (to.x as usize, to.y as usize);
+        let captured = self.pieces[to_y][to_x].take();
+        self._move_piece(from, to);
+        captured
+    }
+
+    /// Undo a previously applied move, restoring a captured piece if provided.
+    pub fn undo_move_unchecked(&mut self, from: Position, to: Position, mut captured: Option<Box<dyn ChessPiece>>, moved_was: bool) {
+        let (from_x, from_y) = (from.x as usize, from.y as usize);
+        let (to_x, to_y) = (to.x as usize, to.y as usize);
+        if let Some(mut piece) = self.pieces[to_y][to_x].take() {
+            piece.shift(from.x, from.y);
+            // reset the moved flag to its previous state
+            piece.get_piece_mut().set_has_moved(moved_was);
+            self.pieces[from_y][from_x] = Some(piece);
+            if let Some(cap) = captured.take() {
+                self.pieces[to_y][to_x] = Some(cap);
+            }
+        } else {
+            println!("Aucune pièce à annuler depuis ({}, {})", to.x, to.y);
+        }
+    }
+
     pub fn is_checked(&self, side: u8, position: Option<Position>) -> bool {
         let mut king_position: Option<Position> = position;
 
