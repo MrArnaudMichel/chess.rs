@@ -13,7 +13,6 @@ use crate::ui::controllers::{home::HomeController, game_page::GamePageController
 use std::cell::RefCell;
 use std::rc::Rc;
 use crate::ui::controllers::game_controller::GameController;
-use adw::prelude::*;
 
 /// Runs the GTK application.
 ///

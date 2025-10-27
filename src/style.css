@@ -1,5 +1,9 @@
 /* style.css */
 
+button {
+    padding: 0;
+}
+
 /* Board squares */
 button.light-square {
     background: #EEEED2;

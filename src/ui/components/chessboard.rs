@@ -35,8 +35,6 @@ impl ChessboardUI {
         for y in 0..8 {
             for x in 0..8 {
                 let button = Button::new();
-                button.set_hexpand(true);
-                button.set_vexpand(true);
 
                 let is_light = (x + y) % 2 == 0;
                 let class = if is_light { "light-square" } else { "dark-square" };
@@ -69,12 +67,16 @@ impl ChessboardUI {
         // Set the image at the end position if there is a piece
         if let Some(button_end) = self.get_button(movement.get_finish().x as u8, movement.get_finish().y as u8) {
             if let Some(piece_image_path) = self.get_piece_image(movement.get_finish().x, movement.get_finish().y) {
-                let image = Image::from_file(piece_image_path);
-                button_end.set_child(Some(&image));
+                Self::set_image_for_button(button_end, &piece_image_path);
             } else {
                 button_end.set_child(None::<&gtk4::Widget>);
             }
         }
+    }
+
+    fn set_image_for_button(button: &Button, image_path: &str) {
+        let image = Image::from_file(image_path);
+        button.set_child(Some(&image));
     }
 
     pub fn set_image_button(&self){
@@ -82,8 +84,7 @@ impl ChessboardUI {
             for y in [0, 1, 6, 7] {
                 if let Some(button) = self.get_button(x, y){
                     if let Some(piece_image_path) = self.get_piece_image(x as i8, y as i8){
-                        let image = Image::from_file(piece_image_path);
-                        button.set_child(Some(&image));
+                        Self::set_image_for_button(button, &piece_image_path);
                     }
                 }
             }
