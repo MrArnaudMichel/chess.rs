@@ -39,7 +39,6 @@ button.valid-move { }
 
 /* Home page styling */
 .home-container {
-    max-width: 480px;
     border-radius: 16px;
     padding: 24px;
     background: rgba(255,255,255,0.3);
@@ -53,9 +52,9 @@ button.valid-move { }
     border-radius: 999px;
     margin-bottom: 8px;
 }
-switch {
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    position: relative;
+
+/* Compact switch in settings */
+switch.normal-switch {
+    min-height: 24px;
+    padding: 0;
 }

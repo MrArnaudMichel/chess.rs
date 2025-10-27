@@ -1,5 +1,5 @@
 use gtk4::prelude::*;
-use gtk4::{Box as GtkBox, Orientation, Adjustment, SpinButton, Switch};
+use gtk4::{Box as GtkBox, Orientation, Adjustment, SpinButton, Switch, Align};
 use adw::{PreferencesPage, PreferencesGroup, ActionRow};
 use adw::prelude::*;
 
@@ -26,6 +26,8 @@ impl SettingsController {
         let adj = Adjustment::new(5.0, 1.0, 180.0, 1.0, 5.0, 0.0);
         let spin = SpinButton::new(Some(&adj), 1.0, 0);
         spin.set_width_chars(4);
+        spin.set_valign(Align::Center);
+        spin.set_vexpand(false);
         row_time.add_suffix(&spin);
         row_time.set_activatable_widget(Some(&spin));
         group_time.add(&row_time);
@@ -36,6 +38,10 @@ impl SettingsController {
         let row_theme = ActionRow::new();
         row_theme.set_title("Thème sombre");
         let theme_switch = Switch::new();
+        theme_switch.set_valign(Align::Center);
+        theme_switch.set_vexpand(false);
+        theme_switch.set_hexpand(false);
+        theme_switch.add_css_class("normal-switch");
         row_theme.add_suffix(&theme_switch);
         row_theme.set_activatable_widget(Some(&theme_switch));
         group_theme.add(&row_theme);
