@@ -95,4 +95,4 @@ Issues and pull requests are welcome. For larger changes, please open an issue f
 
 
 ## License
-No explicit license file is provided in this repository at the moment. If you plan to distribute or fork, consider adding a license (e.g., MIT/Apache-2.0) appropriate to your needs.
+[MIT license](LICENSE)
