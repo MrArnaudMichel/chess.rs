@@ -58,24 +58,8 @@ impl Board {
         println!("  A  B  C  D  E  F  G  H");
     }
 
-    pub fn move_piece(&mut self, from: Position, to: Position) -> bool{
-        println!("Deplacement de {} en {}", from.to_string(), to.to_string());
-        if let Some(piece) = self.get_piece(&from) {
-            if piece.is_valid_move(&to, self) {
-                self._move_piece(from, to);
-                true
-            } else { 
-                println!("Mouvement impossible");
-                false
-            }
-        } else {
-            println!("Aucune pièce trouvée a ces coordonnés");
-            false
-        }
-    }
 
-
-    fn _move_piece(&mut self, from: Position, to: Position) {
+    fn move_piece(&mut self, from: Position, to: Position) {
         let (from_x, from_y) = (from.x as usize, from.y as usize);
         let (to_x, to_y) = (to.x as usize, to.y as usize);
 
@@ -92,7 +76,7 @@ impl Board {
     pub fn apply_move_unchecked(&mut self, from: Position, to: Position) -> Option<Box<dyn ChessPiece>> {
         let (to_x, to_y) = (to.x as usize, to.y as usize);
         let captured = self.pieces[to_y][to_x].take();
-        self._move_piece(from, to);
+        self.move_piece(from, to);
         captured
     }
 
