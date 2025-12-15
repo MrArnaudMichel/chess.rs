@@ -86,9 +86,4 @@ impl ChessPiece for King {
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'K')
     }
-
-
-    fn display(&self) {
-        println!("King {}", self.piece.to_string());
-    }
 }

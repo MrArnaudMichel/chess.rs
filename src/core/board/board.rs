@@ -168,7 +168,7 @@ impl Board {
                             }
 
                             if self.move_piece(from.clone(), to.clone(), side).is_ok() {
-                                let moved_piece = self._move_piece_internal(to.clone(), from.clone()).unwrap();
+                                self._move_piece_internal(to.clone(), from.clone()).unwrap();
                                 let captured = self._move_piece_internal(from.clone(), to.clone()).unwrap();
                                 let still_checked = self.is_checked(side, None);
                                 let _ = self._move_piece_internal(to.clone(), from.clone());

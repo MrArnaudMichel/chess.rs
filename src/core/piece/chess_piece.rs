@@ -37,9 +37,4 @@ pub trait ChessPiece {
         pos.y = y;
         self.get_piece_mut().mark_moved();
     }
-
-    fn display(&self) {
-        let pos = self.get_position();
-        println!("Position : ({}, {})", pos.x, pos.y);
-    }
 }

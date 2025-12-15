@@ -86,11 +86,6 @@ impl ChessPiece for Pawn {
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'P')
     }
-
-
-    fn display(&self) {
-        println!("Pawn {}", self.piece.to_string());
-    }
 }
 
 
