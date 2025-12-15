@@ -47,7 +47,6 @@ impl ChessPiece for King {
             return false;
         }
 
-        // Check castling
         if !self.piece.has_moved(){
             let other_piece = board.get_piece(destination);
             if let Some(other_piece) = other_piece {

@@ -1,13 +1,7 @@
 //! Board representation and utilities: stores pieces and provides movement/check detection.
 use crate::core::types::position::Position;
 use crate::core::piece::chess_piece::ChessPiece;
-use crate::core::types::color::invert_color;
 use crate::core::types::move_error::MoveError;
-
-const MOVE_OK: i8 = 0;
-const ERR_NO_PIECE: i8 = -1;
-const ERR_WRONG_TURN: i8 = -2;
-const ERR_INVALID_MOVE: i8 = -3;
 
 pub struct Board {
     pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
@@ -181,7 +175,7 @@ impl Board {
                                 self.pieces[target_y as usize][target_x as usize] = captured;
 
                                 if !still_checked {
-                                    return true; 
+                                    return true;
                                 }
                             }
                         }
