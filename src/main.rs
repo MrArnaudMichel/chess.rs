@@ -1,9 +1,8 @@
-// mod input;
-mod model;
-mod ui;
-mod app;
-
+mod core;
+mod cli;
+mod gui;
 
 fn main() {
-    app::run();
+    let mut game = core::game::Game::new();
+    game.setup();
 }
