@@ -1,8 +1,14 @@
+/// A simple container for piece state: position, side and movement flag.
+///
+/// Fields:
+/// - `position`: the piece coordinates on the board.
+/// - `side`: 0 for white, 1 for black.
+/// - `has_moved`: whether the piece has moved (used for castling / pawn first move).
 use crate::core::types::position::Position;
 
 pub struct Piece {
     position: Position,
-    side: u8, // 0 for white, 1 for black
+    side: u8,
     has_moved: bool
 }
 
@@ -42,4 +48,3 @@ impl Piece {
         self.has_moved = val;
     }
 }
-

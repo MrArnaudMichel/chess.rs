@@ -1,3 +1,4 @@
+//! Pawn piece implementation and tests.
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
@@ -90,5 +91,64 @@ impl ChessPiece for Pawn {
     fn display(&self) {
         println!("Pawn {}", self.piece.to_string());
     }
+}
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::position::Position;
+
+    fn empty_board() -> Board {
+        Board::new()
+    }
+
+    #[test]
+    fn test_pawn_valid_moves() {
+        let mut board = empty_board();
+        let mut white_pawn = Pawn::new(4, 1, 0);
+        board.add_piece(Box::new(white_pawn));
+
+        let mut black_pawn = Pawn::new(3, 6, 1);
+        board.add_piece(Box::new(black_pawn));
+
+        assert!(board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(4, 3), &board));
+        assert!(board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(4, 2), &board));
+        assert!(board.get_piece(&Position::new(3, 6)).unwrap().is_valid_move(&Position::new(3, 4), &board));
+        assert!(board.get_piece(&Position::new(3, 6)).unwrap().is_valid_move(&Position::new(3, 5), &board));
+        assert!(!board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(5, 3), &board));
+    }
+
+    #[test]
+    fn test_pawn_capture() {
+        let mut board = empty_board();
+        let white_pawn = Pawn::new(4, 4, 0);
+        board.add_piece(Box::new(white_pawn));
+        let black_pawn = Pawn::new(5, 5, 1);
+        board.add_piece(Box::new(black_pawn));
+        assert!(board.get_piece(&Position::new(4, 4)).unwrap().is_valid_move(&Position::new(5, 5), &board));
+    }
+
+    #[test]
+    fn test_pawn_blocked_move() {
+        let mut board = empty_board();
+        let white_pawn = Pawn::new(4, 1, 0);
+        board.add_piece(Box::new(white_pawn));
+        let blocking_piece = Pawn::new(4, 2, 1);
+        board.add_piece(Box::new(blocking_piece));
+        assert!(!board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(4, 2), &board));
+    }
+
+    #[test]
+    fn test_pawn_en_passant() {
+        let mut board = empty_board();
+        let white_pawn = Pawn::new(4, 4, 0);
+        board.add_piece(Box::new(white_pawn));
+        let black_pawn = Pawn::new(5, 6, 1);
+        board.add_piece(Box::new(black_pawn));
+        assert!(board.get_piece(&Position::new(5, 6)).unwrap().is_valid_move(&Position::new(5, 4), &board));
+
+        assert!(board.get_piece(&Position::new(4, 4)).unwrap().is_valid_move(&Position::new(5, 5), &board));
+    }
 }

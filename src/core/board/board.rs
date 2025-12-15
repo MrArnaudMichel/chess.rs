@@ -1,6 +1,13 @@
+//! Board representation and utilities: stores pieces and provides movement/check detection.
 use crate::core::types::position::Position;
 use crate::core::piece::chess_piece::ChessPiece;
+use crate::core::types::color::invert_color;
+use crate::core::types::move_error::MoveError;
 
+const MOVE_OK: i8 = 0;
+const ERR_NO_PIECE: i8 = -1;
+const ERR_WRONG_TURN: i8 = -2;
+const ERR_INVALID_MOVE: i8 = -3;
 
 pub struct Board {
     pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
@@ -59,66 +66,56 @@ impl Board {
     }
 
 
-    pub fn move_piece(&mut self, from: Position, to: Position) -> bool{
-        println!("Deplacement de {} en {}", from.to_string(), to.to_string());
-        if let Some(piece) = self.get_piece(&from) {
-            if piece.is_valid_move(&to, self) {
-                self._move_piece(from, to);
-                true
-            } else {
-                println!("Mouvement impossible");
-                false
-            }
-        } else {
-            println!("Aucune pièce trouvée a ces coordonnés");
-            false
+    pub fn move_piece(
+        &mut self,
+        from: Position,
+        to: Position,
+        turn: u8,
+    ) -> Result<(), MoveError> {
+        let piece = self.get_piece(&from).ok_or(MoveError::NoPiece)?;
+
+        if piece.get_side() != turn {
+            return Err(MoveError::WrongTurn);
         }
+
+        if !piece.is_valid_move(&to, self) {
+            return Err(MoveError::InvalidMove);
+        }
+
+        let captured_piece = self._move_piece_internal(from.clone(), to.clone())?;
+
+        if self.is_checked(turn, None) {
+            let _ = self._move_piece_internal(to, from);
+
+            self.pieces[to.y as usize][to.x as usize] = captured_piece;
+
+            return Err(MoveError::KingInCheck);
+        }
+
+        Ok(())
     }
 
-
-    fn _move_piece(&mut self, from: Position, to: Position) {
+    /// Internal move function: Moves piece and returns the captured piece (if any)
+    /// This allows us to "Undo" a move.
+    fn _move_piece_internal(&mut self, from: Position, to: Position) -> Result<Option<Box<dyn ChessPiece>>, MoveError> {
         let (from_x, from_y) = (from.x as usize, from.y as usize);
         let (to_x, to_y) = (to.x as usize, to.y as usize);
 
-        if let Some(mut piece) = self.pieces[from_y][from_x].take() {
-            piece.shift(to.x, to.y);
-            piece.display();
-            self.pieces[to_y][to_x] = Some(piece);
-        } else {
-            println!("Aucune pièce trouvée à la position ({}, {})", from.x, from.y);
-        }
-    }
+        let mut piece = self.pieces[from_y][from_x].take().ok_or(MoveError::NoPiece)?;
 
-    /// Apply a move without validation and return any captured piece.
-    pub fn apply_move_unchecked(&mut self, from: Position, to: Position) -> Option<Box<dyn ChessPiece>> {
-        let (to_x, to_y) = (to.x as usize, to.y as usize);
+        piece.shift(to.x, to.y);
+
         let captured = self.pieces[to_y][to_x].take();
-        self.move_piece(from, to);
-        captured
-    }
 
-    /// Undo a previously applied move, restoring a captured piece if provided.
-    pub fn undo_move_unchecked(&mut self, from: Position, to: Position, mut captured: Option<Box<dyn ChessPiece>>, moved_was: bool) {
-        let (from_x, from_y) = (from.x as usize, from.y as usize);
-        let (to_x, to_y) = (to.x as usize, to.y as usize);
-        if let Some(mut piece) = self.pieces[to_y][to_x].take() {
-            piece.shift(from.x, from.y);
-            // reset the moved flag to its previous state
-            piece.get_piece_mut().set_has_moved(moved_was);
-            self.pieces[from_y][from_x] = Some(piece);
-            if let Some(cap) = captured.take() {
-                self.pieces[to_y][to_x] = Some(cap);
-            }
-        } else {
-            println!("Aucune pièce à annuler depuis ({}, {})", to.x, to.y);
-        }
+        self.pieces[to_y][to_x] = Some(piece);
+
+        Ok(captured)
     }
 
     pub fn is_checked(&self, side: u8, position: Option<Position>) -> bool {
         let mut king_position: Option<Position> = position;
 
         if king_position.is_none() {
-            // Step 1: Locate the king's position
             'outer: for y in 0..8 {
                 for x in 0..8 {
                     if let Some(piece) = &self.pieces[y][x] {
@@ -131,7 +128,6 @@ impl Board {
             }
         }
 
-        // If no king is found, return false (king is not in check)
         let king_pos = match king_position {
             Some(pos) => pos,
             None => {
@@ -140,23 +136,59 @@ impl Board {
             }
         };
 
-        // Step 2: Check for threats from enemy pieces
         for y in 0..8 {
             for x in 0..8 {
                 if let Some(piece) = &self.pieces[y][x] {
-                    // If the piece is from the opposing side
                     if piece.get_side() != side {
-                        // Check if the piece threatens the king's position
                         if piece.is_valid_move(&king_pos, self) {
-                            println!("King is in check by a {} at ({}, {})", piece.get_name(), x, y);
                             return true;
                         }
                     }
                 }
             }
         }
+        false
+    }
 
-        // No threats found, king is not in check
+    pub fn has_legal_moves(&mut self, side: u8) -> bool {
+
+        for y in 0..8 {
+            for x in 0..8 {
+                let is_own_piece = if let Some(p) = &self.pieces[y][x] {
+                    p.get_side() == side
+                } else {
+                    false
+                };
+
+                if is_own_piece {
+                    let from = Position::new(x as i8, y as i8);
+
+                    for target_y in 0..8 {
+                        for target_x in 0..8 {
+                            let to = Position::new(target_x, target_y);
+
+                            if let Some(p) = &self.pieces[y][x] {
+                                if !p.is_valid_move(&to, self) {
+                                    continue;
+                                }
+                            }
+
+                            if self.move_piece(from.clone(), to.clone(), side).is_ok() {
+                                let moved_piece = self._move_piece_internal(to.clone(), from.clone()).unwrap();
+                                let captured = self._move_piece_internal(from.clone(), to.clone()).unwrap();
+                                let still_checked = self.is_checked(side, None);
+                                let _ = self._move_piece_internal(to.clone(), from.clone());
+                                self.pieces[target_y as usize][target_x as usize] = captured;
+
+                                if !still_checked {
+                                    return true; 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         false
     }
 }

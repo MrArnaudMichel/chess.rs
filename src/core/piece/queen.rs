@@ -1,3 +1,4 @@
+//! Queen piece movement and validation.
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
@@ -54,7 +55,6 @@ impl ChessPiece for Queen {
             return false;
         }
 
-        // Check if the path is clear
         let step_x = if dest_x > current_x { 1 } else if dest_x < current_x { -1 } else { 0 };
         let step_y = if dest_y > current_y { 1 } else if dest_y < current_y { -1 } else { 0 };
 
@@ -84,10 +84,5 @@ impl ChessPiece for Queen {
 
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'Q')
-    }
-
-
-    fn display(&self) {
-        println!("Queen {}", self.piece.to_string());
     }
 }

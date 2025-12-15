@@ -1,3 +1,4 @@
+//! King piece implementation and movement validation.
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;

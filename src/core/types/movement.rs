@@ -2,26 +2,26 @@ use crate::core::types::position::Position;
 
 #[derive(Clone)]
 pub struct Movement {
-    start: Position,
-    finish: Position
+    from: Position,
+    to: Position
 }
 
 
 impl Movement {
-    pub fn new(start: Position, finish: Position) -> Self {
-        Self { start, finish }
+    pub fn new(from: Position, to: Position) -> Self {
+        Self { from, to }
     }
 
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
-        format!("({}, {})", self.start.to_string(), self.finish.to_string())
+        format!("({}, {})", self.from.to_string(), self.to.to_string())
     }
 
-    pub fn get_start(&self) -> Position {
-        self.start.clone()
+    pub fn initial_position(&self) -> Position {
+        self.from.clone()
     }
 
-    pub fn get_finish(&self) -> Position {
-        self.finish.clone()
+    pub fn finish_position(&self) -> Position {
+        self.to.clone()
     }
 }

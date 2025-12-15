@@ -1,3 +1,4 @@
+//! Bishop piece movement validation.
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
@@ -56,7 +57,6 @@ impl ChessPiece for Bishop {
         let mut y = current_pos.y + step_y;
 
         while x != destination.x && y != destination.y {
-            // Prevent out-of-bounds access
             if x < 0 || x >= 8 || y < 0 || y >= 8 {
                 return false;
             }
@@ -67,7 +67,6 @@ impl ChessPiece for Bishop {
             y += step_y;
         }
 
-        // Check destination is on board
         if destination.x < 0 || destination.x >= 8 || destination.y < 0 || destination.y >= 8 {
             return false;
         }
@@ -85,11 +84,6 @@ impl ChessPiece for Bishop {
 
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'B')
-    }
-
-
-    fn display(&self) {
-        println!("Bishop {}", self.piece.to_string());
     }
 
 }

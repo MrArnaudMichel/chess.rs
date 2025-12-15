@@ -71,7 +71,6 @@ impl ChessPiece for Rook {
 
         for pos in positions_to_check {
             if board.is_occupied(&pos) >= 0 {
-                println!("Path obstruct à {}", pos.to_string());
                 return false;
             }
         }
@@ -84,11 +83,6 @@ impl ChessPiece for Rook {
 
     fn piece_to_hex(&self) -> String {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'R')
-    }
-
-
-    fn display(&self) {
-        println!("Rook {}", self.piece.to_string());
     }
 }
 
