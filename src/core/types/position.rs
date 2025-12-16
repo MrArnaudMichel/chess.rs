@@ -55,67 +55,131 @@ impl fmt::Display for Position {
 }
 
 
+#[allow(dead_code)]
 pub const A1: Position = Position { x: 0, y: 0 };
+#[allow(dead_code)]
 pub const B1: Position = Position { x: 1, y: 0 };
+#[allow(dead_code)]
 pub const C1: Position = Position { x: 2, y: 0 };
+#[allow(dead_code)]
 pub const D1: Position = Position { x: 3, y: 0 };
+#[allow(dead_code)]
 pub const E1: Position = Position { x: 4, y: 0 };
+#[allow(dead_code)]
 pub const F1: Position = Position { x: 5, y: 0 };
+#[allow(dead_code)]
 pub const G1: Position = Position { x: 6, y: 0 };
+#[allow(dead_code)]
 pub const H1: Position = Position { x: 7, y: 0 };
+#[allow(dead_code)]
 pub const A2: Position = Position { x: 0, y: 1 };
+#[allow(dead_code)]
 pub const B2: Position = Position { x: 1, y: 1 };
+#[allow(dead_code)]
 pub const C2: Position = Position { x: 2, y: 1 };
+#[allow(dead_code)]
 pub const D2: Position = Position { x: 3, y: 1 };
+#[allow(dead_code)]
 pub const E2: Position = Position { x: 4, y: 1 };
+#[allow(dead_code)]
 pub const F2: Position = Position { x: 5, y: 1 };
+#[allow(dead_code)]
 pub const G2: Position = Position { x: 6, y: 1 };
+#[allow(dead_code)]
 pub const H2: Position = Position { x: 7, y: 1 };
+#[allow(dead_code)]
 pub const A3: Position = Position { x: 0, y: 2 };
+#[allow(dead_code)]
 pub const B3: Position = Position { x: 1, y: 2 };
+#[allow(dead_code)]
 pub const C3: Position = Position { x: 2, y: 2 };
+#[allow(dead_code)]
 pub const D3: Position = Position { x: 3, y: 2 };
+#[allow(dead_code)]
 pub const E3: Position = Position { x: 4, y: 2 };
+#[allow(dead_code)]
 pub const F3: Position = Position { x: 5, y: 2 };
+#[allow(dead_code)]
 pub const G3: Position = Position { x: 6, y: 2 };
+#[allow(dead_code)]
 pub const H3: Position = Position { x: 7, y: 2 };
+#[allow(dead_code)]
 pub const A4: Position = Position { x: 0, y: 3 };
+#[allow(dead_code)]
 pub const B4: Position = Position { x: 1, y: 3 };
+#[allow(dead_code)]
 pub const C4: Position = Position { x: 2, y: 3 };
+#[allow(dead_code)]
 pub const D4: Position = Position { x: 3, y: 3 };
+#[allow(dead_code)]
 pub const E4: Position = Position { x: 4, y: 3 };
+#[allow(dead_code)]
 pub const F4: Position = Position { x: 5, y: 3 };
+#[allow(dead_code)]
 pub const G4: Position = Position { x: 6, y: 3 };
+#[allow(dead_code)]
 pub const H4: Position = Position { x: 7, y: 3 };
+#[allow(dead_code)]
 pub const A5: Position = Position { x: 0, y: 4 };
+#[allow(dead_code)]
 pub const B5: Position = Position { x: 1, y: 4 };
+#[allow(dead_code)]
 pub const C5: Position = Position { x: 2, y: 4 };
+#[allow(dead_code)]
 pub const D5: Position = Position { x: 3, y: 4 };
+#[allow(dead_code)]
 pub const E5: Position = Position { x: 4, y: 4 };
+#[allow(dead_code)]
 pub const F5: Position = Position { x: 5, y: 4 };
+#[allow(dead_code)]
 pub const G5: Position = Position { x: 6, y: 4 };
+#[allow(dead_code)]
 pub const H5: Position = Position { x: 7, y: 4 };
+#[allow(dead_code)]
 pub const A6: Position = Position { x: 0, y: 5 };
+#[allow(dead_code)]
 pub const B6: Position = Position { x: 1, y: 5 };
+#[allow(dead_code)]
 pub const C6: Position = Position { x: 2, y: 5 };
+#[allow(dead_code)]
 pub const D6: Position = Position { x: 3, y: 5 };
+#[allow(dead_code)]
 pub const E6: Position = Position { x: 4, y: 5 };
+#[allow(dead_code)]
 pub const F6: Position = Position { x: 5, y: 5 };
+#[allow(dead_code)]
 pub const G6: Position = Position { x: 6, y: 5 };
+#[allow(dead_code)]
 pub const H6: Position = Position { x: 7, y: 5 };
+#[allow(dead_code)]
 pub const A7: Position = Position { x: 0, y: 6 };
+#[allow(dead_code)]
 pub const B7: Position = Position { x: 1, y: 6 };
+#[allow(dead_code)]
 pub const C7: Position = Position { x: 2, y: 6 };
+#[allow(dead_code)]
 pub const D7: Position = Position { x: 3, y: 6 };
+#[allow(dead_code)]
 pub const E7: Position = Position { x: 4, y: 6 };
+#[allow(dead_code)]
 pub const F7: Position = Position { x: 5, y: 6 };
+#[allow(dead_code)]
 pub const G7: Position = Position { x: 6, y: 6 };
+#[allow(dead_code)]
 pub const H7: Position = Position { x: 7, y: 6 };
+#[allow(dead_code)]
 pub const A8: Position = Position { x: 0, y: 7 };
+#[allow(dead_code)]
 pub const B8: Position = Position { x: 1, y: 7 };
+#[allow(dead_code)]
 pub const C8: Position = Position { x: 2, y: 7 };
+#[allow(dead_code)]
 pub const D8: Position = Position { x: 3, y: 7 };
+#[allow(dead_code)]
 pub const E8: Position = Position { x: 4, y: 7 };
+#[allow(dead_code)]
 pub const F8: Position = Position { x: 5, y: 7 };
+#[allow(dead_code)]
 pub const G8: Position = Position { x: 6, y: 7 };
+#[allow(dead_code)]
 pub const H8: Position = Position { x: 7, y: 7 };
