@@ -9,9 +9,9 @@ pub struct Rook {
 }
 
 impl Rook {
-    pub fn new(x: i8, y: i8, side: u8) -> Self {
+    pub fn new(position: Position, side: u8) -> Self {
         Self {
-            piece: Piece::new(x, y, side)
+            piece: Piece::new(position, side)
         }
     }
 }
@@ -90,7 +90,8 @@ impl ChessPiece for Rook {
 mod tests {
     use super::*;
     use crate::core::board::board::Board;
-    use crate::core::types::position::Position;
+    use crate::core::types::color::{BLACK, WHITE};
+    use crate::core::types::position::{A1, A2, A4, D4, F1};
 
     fn empty_board() -> Board {
         Board::new()
@@ -99,9 +100,9 @@ mod tests {
     #[test]
     fn rook_can_move_vertically() {
         let board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        let destination = Position::new(0, 5);
+        let destination = A4;
 
         assert!(rook.is_valid_move(&destination, &board));
     }
@@ -109,9 +110,9 @@ mod tests {
     #[test]
     fn rook_can_move_horizontally() {
         let board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        let destination = Position::new(5, 0);
+        let destination = F1;
 
         assert!(rook.is_valid_move(&destination, &board));
     }
@@ -119,9 +120,9 @@ mod tests {
     #[test]
     fn rook_cannot_move_diagonally() {
         let board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        let destination = Position::new(3, 3);
+        let destination = D4;
 
         assert!(!rook.is_valid_move(&destination, &board));
     }
@@ -129,11 +130,11 @@ mod tests {
     #[test]
     fn rook_cannot_move_if_blocked() {
         let mut board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        board.add_piece(Box::new(Rook::new(0, 3, 1)));
+        board.add_piece(Box::new(Rook::new(A2, BLACK)));
 
-        let destination = Position::new(0, 5);
+        let destination = A4;
 
         assert!(!rook.is_valid_move(&destination, &board));
     }
@@ -141,21 +142,21 @@ mod tests {
     #[test]
     fn rook_can_capture_enemy() {
         let mut board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        board.add_piece(Box::new(Rook::new(0, 5, 1)));
-        let destination = Position::new(0, 5);
+        board.add_piece(Box::new(Rook::new(A4, BLACK)));
+        let destination = A4;
         assert!(rook.is_valid_move(&destination, &board));
     }
 
     #[test]
     fn rook_cannot_capture_ally() {
         let mut board = empty_board();
-        let rook = Rook::new(0, 0, 0);
+        let rook = Rook::new(A1, WHITE);
 
-        board.add_piece(Box::new(Rook::new(0, 5, 0)));
+        board.add_piece(Box::new(Rook::new(A4, WHITE)));
 
-        let destination = Position::new(0, 5);
+        let destination = A4;
 
         assert!(!rook.is_valid_move(&destination, &board));
     }

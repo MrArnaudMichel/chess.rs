@@ -9,9 +9,9 @@ pub struct Bishop {
 }
 
 impl Bishop {
-    pub fn new(x: i8, y: i8, side: u8) -> Self {
+    pub fn new(position: Position, side: u8) -> Self {
         Self {
-            piece: Piece::new(x, y, side)
+            piece: Piece::new(position, side)
         }
     }
 }

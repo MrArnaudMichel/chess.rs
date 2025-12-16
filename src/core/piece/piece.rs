@@ -13,9 +13,9 @@ pub struct Piece {
 }
 
 impl Piece {
-    pub fn new(x: i8, y: i8, side: u8) -> Self {
+    pub fn new(position: Position, side: u8) -> Self {
         Self {
-            position: Position::new(x, y),
+            position,
             side,
             has_moved: false
         }

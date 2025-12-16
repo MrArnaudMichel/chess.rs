@@ -9,9 +9,9 @@ pub struct Pawn {
 }
 
 impl Pawn {
-    pub fn new(x: i8, y: i8, side: u8) -> Self {
+    pub fn new(position: Position, side: u8) -> Self {
         Self {
-            piece: Piece::new(x, y, side)
+            piece: Piece::new(position, side)
         }
     }
 }
@@ -93,7 +93,8 @@ impl ChessPiece for Pawn {
 mod tests {
     use super::*;
     use crate::core::board::board::Board;
-    use crate::core::types::position::Position;
+    use crate::core::types::color::WHITE;
+    use crate::core::types::position::{Position, E5, E6, F6};
 
     fn empty_board() -> Board {
         Board::new()
@@ -102,10 +103,10 @@ mod tests {
     #[test]
     fn test_pawn_valid_moves() {
         let mut board = empty_board();
-        let mut white_pawn = Pawn::new(4, 1, 0);
+        let mut white_pawn = Pawn::new(E5, WHITE);
         board.add_piece(Box::new(white_pawn));
 
-        let mut black_pawn = Pawn::new(3, 6, 1);
+        let mut black_pawn = Pawn::new(Position::new(3, 6), 1);
         board.add_piece(Box::new(black_pawn));
 
         assert!(board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(4, 3), &board));
@@ -118,9 +119,9 @@ mod tests {
     #[test]
     fn test_pawn_capture() {
         let mut board = empty_board();
-        let white_pawn = Pawn::new(4, 4, 0);
+        let white_pawn = Pawn::new(E5, WHITE);
         board.add_piece(Box::new(white_pawn));
-        let black_pawn = Pawn::new(5, 5, 1);
+        let black_pawn = Pawn::new(F6, 1);
         board.add_piece(Box::new(black_pawn));
         assert!(board.get_piece(&Position::new(4, 4)).unwrap().is_valid_move(&Position::new(5, 5), &board));
     }
@@ -128,9 +129,9 @@ mod tests {
     #[test]
     fn test_pawn_blocked_move() {
         let mut board = empty_board();
-        let white_pawn = Pawn::new(4, 1, 0);
+        let white_pawn = Pawn::new(E5, WHITE);
         board.add_piece(Box::new(white_pawn));
-        let blocking_piece = Pawn::new(4, 2, 1);
+        let blocking_piece = Pawn::new(E6, 1);
         board.add_piece(Box::new(blocking_piece));
         assert!(!board.get_piece(&Position::new(4, 1)).unwrap().is_valid_move(&Position::new(4, 2), &board));
     }
@@ -138,9 +139,9 @@ mod tests {
     #[test]
     fn test_pawn_en_passant() {
         let mut board = empty_board();
-        let white_pawn = Pawn::new(4, 4, 0);
+        let white_pawn = Pawn::new(E5, WHITE);
         board.add_piece(Box::new(white_pawn));
-        let black_pawn = Pawn::new(5, 6, 1);
+        let black_pawn = Pawn::new(Position::new(5, 6), 1);
         board.add_piece(Box::new(black_pawn));
         assert!(board.get_piece(&Position::new(5, 6)).unwrap().is_valid_move(&Position::new(5, 4), &board));
 

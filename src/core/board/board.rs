@@ -14,7 +14,7 @@ impl Board {
         }
     }
 
-    pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) {
+    pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) -> &mut Self{
         let pos = piece.get_position().clone();
 
         if pos.x < 8 && pos.y < 8 {
@@ -22,6 +22,7 @@ impl Board {
         } else {
             println!("Position invalide : la pièce doit être dans un tableau 8x8");
         }
+        self
     }
 
     pub fn get_piece(&self, position: &Position) -> Option<&Box<dyn ChessPiece>> {
