@@ -86,3 +86,51 @@ impl ChessPiece for Queen {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'Q')
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::color::WHITE;
+    use crate::core::types::position::B2;
+
+
+    fn setup_queen() -> (Board, Position) {
+        let mut board = Board::new();
+        let queen = Queen::new(B2, WHITE);
+        board.place_piece(Box::new(queen));
+        (board, B2)
+    }
+
+    #[test]
+    fn queen_can_move_vertically() {
+        let (board, pos) = setup_queen();
+        let queen = board.get_piece(&pos).unwrap();
+        assert!(queen.is_valid_move(&Position::new(1, 5), &board));
+        assert!(queen.is_valid_move(&Position::new(1, 0), &board));
+    }
+
+    #[test]
+    fn queen_can_move_horizontally() {
+        let (board, pos) = setup_queen();
+        let queen = board.get_piece(&pos).unwrap();
+        assert!(queen.is_valid_move(&Position::new(4, 1), &board));
+        assert!(queen.is_valid_move(&Position::new(0, 1), &board));
+    }
+
+    #[test]
+    fn queen_can_move_diagonally() {
+        let (board, pos) = setup_queen();
+        let queen = board.get_piece(&pos).unwrap();
+        assert!(queen.is_valid_move(&Position::new(4, 4), &board));
+        assert!(queen.is_valid_move(&Position::new(0, 0), &board));
+    }
+
+    #[test]
+    fn queen_cannot_move_invalidly() {
+        let (board, pos) = setup_queen();
+        let queen = board.get_piece(&pos).unwrap();
+        assert!(!queen.is_valid_move(&Position::new(3, 4), &board));
+        assert!(!queen.is_valid_move(&Position::new(2, 3), &board));
+    }
+}

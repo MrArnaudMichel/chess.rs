@@ -93,71 +93,55 @@ mod tests {
     use crate::core::types::color::{BLACK, WHITE};
     use crate::core::types::position::{A1, A2, A4, D4, F1};
 
-    fn empty_board() -> Board {
-        Board::new()
+    fn setup_rook() -> (Board, Rook) {
+        let board = Board::new();
+        let rook = Rook::new(A1, WHITE);
+        (board, rook)
     }
 
     #[test]
     fn rook_can_move_vertically() {
-        let board = empty_board();
-        let rook = Rook::new(A1, WHITE);
-
-        let destination = A4;
-
-        assert!(rook.is_valid_move(&destination, &board));
+        let (board, rook) = setup_rook();
+        assert!(rook.is_valid_move(&A4, &board));
     }
 
     #[test]
     fn rook_can_move_horizontally() {
-        let board = empty_board();
-        let rook = Rook::new(A1, WHITE);
-
-        let destination = F1;
-
-        assert!(rook.is_valid_move(&destination, &board));
+        let (board, rook) = setup_rook();
+        assert!(rook.is_valid_move(&F1, &board));
     }
 
     #[test]
     fn rook_cannot_move_diagonally() {
-        let board = empty_board();
-        let rook = Rook::new(A1, WHITE);
-
-        let destination = D4;
-
-        assert!(!rook.is_valid_move(&destination, &board));
+        let (board, rook) = setup_rook();
+        assert!(!rook.is_valid_move(&D4, &board));
     }
 
     #[test]
     fn rook_cannot_move_if_blocked() {
-        let mut board = empty_board();
-        let rook = Rook::new(A1, WHITE);
+        let (mut board, rook) = setup_rook();
 
-        board.add_piece(Box::new(Rook::new(A2, BLACK)));
+        board.place_piece(Box::new(Rook::new(A2, BLACK)));
 
-        let destination = A4;
-
-        assert!(!rook.is_valid_move(&destination, &board));
+        assert!(!rook.is_valid_move(&A4, &board));
     }
 
     #[test]
     fn rook_can_capture_enemy() {
-        let mut board = empty_board();
-        let rook = Rook::new(A1, WHITE);
+        let (mut board, rook) = setup_rook();
 
-        board.add_piece(Box::new(Rook::new(A4, BLACK)));
-        let destination = A4;
-        assert!(rook.is_valid_move(&destination, &board));
+        board.place_piece(Box::new(Rook::new(A4, BLACK)));
+
+        assert!(rook.is_valid_move(&A4, &board));
     }
 
     #[test]
     fn rook_cannot_capture_ally() {
-        let mut board = empty_board();
-        let rook = Rook::new(A1, WHITE);
+        let (mut board, rook) = setup_rook();
 
-        board.add_piece(Box::new(Rook::new(A4, WHITE)));
+        board.place_piece(Box::new(Rook::new(A4, WHITE)));
 
-        let destination = A4;
-
-        assert!(!rook.is_valid_move(&destination, &board));
+        assert!(!rook.is_valid_move(&A4, &board));
     }
 }
+

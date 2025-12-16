@@ -14,7 +14,7 @@ impl Board {
         }
     }
 
-    pub fn add_piece(&mut self, piece: Box<dyn ChessPiece>) -> &mut Self{
+    pub fn place_piece(&mut self, piece: Box<dyn ChessPiece>) -> &mut Self{
         let pos = piece.get_position().clone();
 
         if pos.x < 8 && pos.y < 8 {

@@ -21,8 +21,8 @@ impl Game {
         for i in 0..8 {
             let white_pawn = Box::new(Pawn::new(Position::new(i, 1), WHITE));
             let black_pawn = Box::new(Pawn::new(Position::new(i, 6), BLACK));
-            self.board.add_piece(white_pawn);
-            self.board.add_piece(black_pawn);
+            self.board.place_piece(white_pawn);
+            self.board.place_piece(black_pawn);
         }
 
         let major_pieces: Vec<(&dyn Fn(Position, u8) -> Box<dyn ChessPiece>, &[(Position, u8)])> = vec![
@@ -36,7 +36,7 @@ impl Game {
         for (constructor, positions) in major_pieces {
             for &(position, side) in positions {
                 let piece = constructor(position, side);
-                self.board.add_piece(piece);
+                self.board.place_piece(piece);
             }
         }
     }
