@@ -1,7 +1,12 @@
 //! Queen piece movement and validation.
+
+use std::any::Any;
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
+use crate::core::types::r#move::MoveError::{BlockedPath, InvalidMove};
+use crate::core::types::r#move::{MoveError, MoveOutcome};
+use crate::core::types::r#move::MoveOutcome::{Capture, Valid};
 use super::piece::{Piece};
 pub struct Queen {
     piece: Piece
@@ -17,6 +22,9 @@ impl Queen {
 
 
 impl ChessPiece for Queen {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
     fn get_position(&self) -> &Position {
         self.piece.get_position()
     }
@@ -39,20 +47,20 @@ impl ChessPiece for Queen {
         self.piece.get_side()
     }
 
-    fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
+    fn move_piece(&self, destination: &Position, board: &Board) -> Result<MoveOutcome, MoveError> {
         let current_position = self.get_position();
         let (current_x, current_y) = (current_position.x, current_position.y);
         let (dest_x, dest_y) = (destination.x, destination.y);
 
-        if current_x == dest_x && current_y == dest_y {
-            return false;
+        if current_x == dest_x && current_y == dest_y  || !board.is_within_bounds(destination) {
+            return Err(InvalidMove)
         }
 
         let dx = (dest_x - current_x).abs();
         let dy = (dest_y - current_y).abs();
 
         if dx != 0 && dy != 0 && dx != dy {
-            return false;
+            return Err(InvalidMove)
         }
 
         let step_x = if dest_x > current_x { 1 } else if dest_x < current_x { -1 } else { 0 };
@@ -63,7 +71,7 @@ impl ChessPiece for Queen {
 
         while (x, y) != (dest_x, dest_y) {
             if board.is_occupied(&Position::new(x, y)) >= 0{
-                return false;
+                return Err(BlockedPath);
             }
 
             x += step_x;
@@ -71,10 +79,12 @@ impl ChessPiece for Queen {
         }
 
         if let Some(piece) = board.get_piece(destination) {
-            return piece.get_side() != self.get_side();
+            if piece.get_side() != self.get_side() {
+                return Ok(Capture);
+            } 
+            return Err(InvalidMove);
         }
-
-        true
+        Ok(Valid)
     }
 
     fn get_name(&self) -> String {
@@ -104,49 +114,49 @@ mod tests {
     #[test]
     fn queen_can_move_vertically() {
         let (board, queen) = setup_queen();
-        assert!(queen.is_valid_move(&Position::new(1, 5), &board));
-        assert!(queen.is_valid_move(&Position::new(1, 0), &board));
+        assert!(queen.move_piece(&Position::new(1, 5), &board).is_ok());
+        assert!(queen.move_piece(&Position::new(1, 0), &board).is_ok());
     }
 
     #[test]
     fn queen_can_move_horizontally() {
         let (board, queen) = setup_queen();
-        assert!(queen.is_valid_move(&Position::new(4, 1), &board));
-        assert!(queen.is_valid_move(&Position::new(0, 1), &board));
+        assert!(queen.move_piece(&Position::new(4, 1), &board).is_ok());
+        assert!(queen.move_piece(&Position::new(0, 1), &board).is_ok());
     }
 
     #[test]
     fn queen_can_move_diagonally() {
         let (board, queen) = setup_queen();
-        assert!(queen.is_valid_move(&Position::new(4, 4), &board));
-        assert!(queen.is_valid_move(&Position::new(0, 0), &board));
+        assert!(queen.move_piece(&Position::new(4, 4), &board).is_ok());
+        assert!(queen.move_piece(&Position::new(0, 0), &board).is_ok());
     }
 
     #[test]
     fn queen_cannot_move_invalidly() {
         let (board, queen) = setup_queen();
-        assert!(!queen.is_valid_move(&Position::new(3, 4), &board));
-        assert!(!queen.is_valid_move(&Position::new(2, 3), &board));
+        assert!(!queen.move_piece(&Position::new(3, 4), &board).is_ok());
+        assert!(!queen.move_piece(&Position::new(2, 3), &board).is_ok());
     }
 
     #[test]
     fn queen_cannot_move_if_blocked() {
         let (mut board, queen) = setup_queen();
         board.place_piece(Box::new(Queen::new(C2, BLACK)));
-        assert!(!queen.is_valid_move(&D2, &board));
+        assert!(!queen.move_piece(&D2, &board).is_ok());
     }
 
     #[test]
     fn queen_can_capture_enemy() {
         let (mut board, queen) = setup_queen();
         board.place_piece(Box::new(Queen::new(D2, BLACK)));
-        assert!(queen.is_valid_move(&D2, &board));
+        assert!(queen.move_piece(&D2, &board).is_ok());
     }
 
     #[test]
     fn queen_cannot_capture_ally() {
         let (mut board, queen) = setup_queen();
         board.place_piece(Box::new(Queen::new(D2, WHITE)));
-        assert!(!queen.is_valid_move(&D2, &board));
+        assert!(!queen.move_piece(&D2, &board).is_ok());
     }
 }

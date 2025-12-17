@@ -9,7 +9,7 @@ use crate::core::types::position::Position;
 pub struct Piece {
     position: Position,
     side: u8,
-    has_moved: bool
+    move_count: i8,
 }
 
 impl Piece {
@@ -17,7 +17,7 @@ impl Piece {
         Self {
             position,
             side,
-            has_moved: false
+            move_count: 0,
         }
     }
 
@@ -33,10 +33,15 @@ impl Piece {
     }
 
     pub fn mark_moved(&mut self) {
-        self.has_moved = true;
+        self.move_count = self.move_count + 1;
     }
 
     pub fn has_moved(&self) -> bool {
-        self.has_moved
+        self.move_count > 0
+    }
+    
+    #[allow(dead_code)]
+    pub fn get_move_count(&self) -> i8 {
+        self.move_count
     }
 }

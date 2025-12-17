@@ -1,6 +1,10 @@
+use std::any::Any;
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
+use crate::core::types::r#move::{MoveError, MoveOutcome};
+use crate::core::types::r#move::MoveError::{BlockedPath, InvalidMove};
+use crate::core::types::r#move::MoveOutcome::{Capture, Valid};
 use super::piece::{Piece};
 
 
@@ -17,6 +21,9 @@ impl Rook {
 }
 
 impl ChessPiece for Rook {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
     fn get_position(&self) -> &Position {
         self.piece.get_position()
     }
@@ -39,18 +46,18 @@ impl ChessPiece for Rook {
         self.piece.get_side()
     }
 
-    fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
+    fn move_piece(&self, destination: &Position, board: &Board) -> Result<MoveOutcome, MoveError> {
         let current_pos = self.get_position();
         let side = self.get_side();
 
 
 
-        if current_pos == destination || (current_pos.x != destination.x && current_pos.y != destination.y) {
-            return false;
+        if current_pos == destination || (current_pos.x != destination.x && current_pos.y != destination.y) || !board.is_within_bounds(destination) {
+            return Err(InvalidMove)
         }
 
         if board.is_occupied(destination) == side as i8 {
-            return false;
+            return Err(BlockedPath)
         }
 
         let positions_to_check = if current_pos.x != destination.x {
@@ -71,10 +78,13 @@ impl ChessPiece for Rook {
 
         for pos in positions_to_check {
             if board.is_occupied(&pos) >= 0 {
-                return false;
+                return Err(BlockedPath)
             }
         }
-        true
+        if board.is_occupied(destination) == ((side ^ 1) as i8) {
+            return Ok(Capture)
+        }
+        Ok(Valid)
     }
 
     fn get_name(&self) -> String {
@@ -102,19 +112,19 @@ mod tests {
     #[test]
     fn rook_can_move_vertically() {
         let (board, rook) = setup_rook();
-        assert!(rook.is_valid_move(&A4, &board));
+        assert!(rook.move_piece(&A4, &board).is_ok());
     }
 
     #[test]
     fn rook_can_move_horizontally() {
         let (board, rook) = setup_rook();
-        assert!(rook.is_valid_move(&F1, &board));
+        assert!(rook.move_piece(&F1, &board).is_ok());
     }
 
     #[test]
     fn rook_cannot_move_diagonally() {
         let (board, rook) = setup_rook();
-        assert!(!rook.is_valid_move(&D4, &board));
+        assert!(!rook.move_piece(&D4, &board).is_ok());
     }
 
     #[test]
@@ -123,7 +133,7 @@ mod tests {
 
         board.place_piece(Box::new(Rook::new(A2, BLACK)));
 
-        assert!(!rook.is_valid_move(&A4, &board));
+        assert!(!rook.move_piece(&A4, &board).is_ok());
     }
 
     #[test]
@@ -132,7 +142,7 @@ mod tests {
 
         board.place_piece(Box::new(Rook::new(A4, BLACK)));
 
-        assert!(rook.is_valid_move(&A4, &board));
+        assert!(rook.move_piece(&A4, &board).is_ok());
     }
 
     #[test]
@@ -141,7 +151,7 @@ mod tests {
 
         board.place_piece(Box::new(Rook::new(A4, WHITE)));
 
-        assert!(!rook.is_valid_move(&A4, &board));
+        assert!(!rook.move_piece(&A4, &board).is_ok());
     }
 }
 

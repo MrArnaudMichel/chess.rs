@@ -1,7 +1,12 @@
 //! Bishop piece movement validation.
+
+use std::any::Any;
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
+use crate::core::types::r#move::{MoveError, MoveOutcome};
+use crate::core::types::r#move::MoveError::{BlockedPath, InvalidMove};
+use crate::core::types::r#move::MoveOutcome::{Capture, Valid};
 use super::piece::{Piece};
 
 pub struct Bishop {
@@ -17,6 +22,9 @@ impl Bishop {
 }
 
 impl ChessPiece for Bishop {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
     fn get_position(&self) -> &Position {
         self.piece.get_position()
     }
@@ -39,15 +47,15 @@ impl ChessPiece for Bishop {
         self.piece.get_side()
     }
 
-    fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
+    fn move_piece(&self, destination: &Position, board: &Board) -> Result<MoveOutcome, MoveError> {
         let current_pos = self.get_position();
         let side = self.get_side();
 
         let dx = destination.x - current_pos.x;
         let dy = destination.y - current_pos.y;
 
-        if dx.abs() != dy.abs() {
-            return false;
+        if dx.abs() != dy.abs() || !board.is_within_bounds(destination) {
+            return Err(InvalidMove);
         }
 
         let step_x = if dx > 0 { 1 } else { -1 };
@@ -56,25 +64,24 @@ impl ChessPiece for Bishop {
         let mut x = current_pos.x + step_x;
         let mut y = current_pos.y + step_y;
 
-        while x != destination.x && y != destination.y {
-            if x < 0 || x >= 8 || y < 0 || y >= 8 {
-                return false;
-            }
+        while x != destination.x && y != destination.y && board.is_within_bounds(&Position::new(x, y)) {
             if board.is_occupied(&Position::new(x, y)) >= 0 {
-                return false;
+                return Err(BlockedPath)
             }
             x += step_x;
             y += step_y;
         }
 
         if destination.x < 0 || destination.x >= 8 || destination.y < 0 || destination.y >= 8 {
-            return false;
+            return Err(InvalidMove)
         }
         let value = board.is_occupied(&Position::new(destination.x, destination.y));
-        if value == ((side ^ 1) as i8) || value == -1 {
-            return true;
+        if value == ((side ^ 1) as i8) {
+            return Ok(Capture)
+        } else if value == -1 {
+            return Ok(Valid)
         }
-        false
+        Err(InvalidMove)
     }
 
     fn get_name(&self) -> String {

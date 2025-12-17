@@ -1,7 +1,12 @@
 //! King piece implementation and movement validation.
+
+use std::any::Any;
 use crate::core::board::board::Board;
 use crate::core::piece::chess_piece::ChessPiece;
 use crate::core::types::position::Position;
+use crate::core::types::r#move::{MoveError, MoveOutcome};
+use crate::core::types::r#move::MoveError::{BlockedPath, InvalidMove};
+use crate::core::types::r#move::MoveOutcome::{Castling, Valid};
 use super::piece::{Piece};
 
 pub struct King {
@@ -17,6 +22,9 @@ impl King {
 }
 
 impl ChessPiece for King {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
     fn get_position(&self) -> &Position {
         self.piece.get_position()
     }
@@ -39,12 +47,12 @@ impl ChessPiece for King {
         self.piece.get_side()
     }
 
-    fn is_valid_move(&self, destination: &Position, board: &Board) -> bool {
+    fn move_piece(&self, destination: &Position, board: &Board) -> Result<MoveOutcome, MoveError> {
         let current_pos = self.get_position();
         let side = self.get_side();
 
-        if current_pos == destination {
-            return false;
+        if current_pos == destination || !board.is_within_bounds(destination){
+            return Err(InvalidMove)
         }
 
         if !self.piece.has_moved(){
@@ -56,12 +64,12 @@ impl ChessPiece for King {
                         let mut x = current_pos.x + step;
                         while x != destination.x {
                             let pos_to_check = Position::new(x, current_pos.y);
-                            if board.is_occupied(&pos_to_check) != -1 {
-                                return false;
+                            if board.is_occupied(&pos_to_check) >= 0 {
+                                return Err(BlockedPath)
                             }
                             x += step;
                         }
-                        return true;
+                        return Ok(Castling)
                     }
                 }
             }
@@ -72,11 +80,11 @@ impl ChessPiece for King {
 
         if dx <= 1 && dy <= 1 {
             if board.is_occupied(destination) == side as i8 {
-                return false;
+                return Err(BlockedPath)
             }
-            return true;
+            return Ok(Valid)
         }
-        false
+        Err(InvalidMove)
     }
 
     fn get_name(&self) -> String {

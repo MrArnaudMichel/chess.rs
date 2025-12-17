@@ -3,7 +3,7 @@
 use crate::core::game::Game;
 use crate::cli::{renderer, input};
 use crate::core::types::color::invert_color;
-use crate::core::types::move_error::MoveError;
+use crate::core::types::r#move::{MoveError, MoveOutcome};
 
 pub fn run() {
     let mut game = Game::new();
@@ -53,11 +53,16 @@ pub fn run() {
         );
 
         match moved {
-            Ok(()) => {
+            Ok(MoveOutcome::Valid) |
+            Ok(MoveOutcome::Capture) |
+            Ok(MoveOutcome::Castling) |
+            Ok(MoveOutcome::Promotion) |
+            Ok(MoveOutcome::EnPassant {captured: _}) => {
                 println!("Coup joué");
                 invert_color(&mut game.turn);
             },
             Err(MoveError::NoPiece) => println!("Aucune pièce ici"),
+            Err(MoveError::BlockedPath) => println!("Le chemin est bloqué"),
             Err(MoveError::WrongTurn) => println!("Ce n'est pas ton tour"),
             Err(MoveError::InvalidMove) => {
                 println!("Coup invalide (règles de déplacement ou échec)");
@@ -65,7 +70,6 @@ pub fn run() {
             Err(MoveError::KingInCheck) => {
                 println!("Coup invalide : votre roi serait en échec");
             },
-            
         }
     }
 }

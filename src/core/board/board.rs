@@ -1,7 +1,8 @@
 //! Board representation and utilities: stores pieces and provides movement/check detection.
 use crate::core::types::position::Position;
 use crate::core::piece::chess_piece::ChessPiece;
-use crate::core::types::move_error::MoveError;
+use crate::core::types::r#move::{MoveError, MoveOutcome};
+use crate::core::types::r#move::MoveError::{KingInCheck, NoPiece, WrongTurn};
 
 pub struct Board {
     pieces: [[Option<Box<dyn ChessPiece>>; 8]; 8],
@@ -33,6 +34,11 @@ impl Board {
         }
     }
 
+    /// Returns:
+    /// - 0 if occupied by side WHITE
+    /// - 1 if occupied by side BLACK
+    /// - -1 if not occupied
+    /// - -2 if out of bounds
     pub fn is_occupied(&self, position: &Position) -> i8 {
         if position.x < 8 && position.y < 8 {
             if let Some(piece) = self.pieces[position.y as usize][position.x as usize].as_ref() {
@@ -41,7 +47,7 @@ impl Board {
                 -1
             }
         } else {
-            -1
+            -2
         }
     }
 
@@ -66,29 +72,40 @@ impl Board {
         from: Position,
         to: Position,
         turn: u8,
-    ) -> Result<(), MoveError> {
-        let piece = self.get_piece(&from).ok_or(MoveError::NoPiece)?;
+    ) -> Result<MoveOutcome, MoveError> {
+        let piece = self.get_piece(&from).ok_or(NoPiece)?;
 
         if piece.get_side() != turn {
-            return Err(MoveError::WrongTurn);
+            return Err(WrongTurn);
         }
 
-        if !piece.is_valid_move(&to, self) {
-            return Err(MoveError::InvalidMove);
-        }
+        let outcome = piece.move_piece(&to, self)?;
 
         let captured_piece = self._move_piece_internal(from.clone(), to.clone())?;
 
+        let mut en_passant_captured: Option<Box<dyn ChessPiece>> = None;
+        if let MoveOutcome::EnPassant { captured } = &outcome {
+            let (x, y) = (captured.x as usize, captured.y as usize);
+            en_passant_captured = self.pieces[y][x].take();
+        }
+
         if self.is_checked(turn, None) {
-            let _ = self._move_piece_internal(to, from);
+            let _ = self._move_piece_internal(to.clone(), from.clone());
 
             self.pieces[to.y as usize][to.x as usize] = captured_piece;
 
-            return Err(MoveError::KingInCheck);
+            if let MoveOutcome::EnPassant { captured } = outcome {
+                let (x, y) = (captured.x as usize, captured.y as usize);
+                self.pieces[y][x] = en_passant_captured;
+            }
+
+            return Err(KingInCheck);
         }
 
-        Ok(())
+        Ok(outcome)
     }
+
+
 
     /// Internal move function: Moves piece and returns the captured piece (if any)
     /// This allows us to "Undo" a move.
@@ -96,7 +113,7 @@ impl Board {
         let (from_x, from_y) = (from.x as usize, from.y as usize);
         let (to_x, to_y) = (to.x as usize, to.y as usize);
 
-        let mut piece = self.pieces[from_y][from_x].take().ok_or(MoveError::NoPiece)?;
+        let mut piece = self.pieces[from_y][from_x].take().ok_or(NoPiece)?;
 
         piece.shift(to.x, to.y);
 
@@ -135,7 +152,7 @@ impl Board {
             for x in 0..8 {
                 if let Some(piece) = &self.pieces[y][x] {
                     if piece.get_side() != side {
-                        if piece.is_valid_move(&king_pos, self) {
+                        if piece.move_piece(&king_pos, self).is_ok() {
                             return true;
                         }
                     }
@@ -163,7 +180,7 @@ impl Board {
                             let to = Position::new(target_x, target_y);
 
                             if let Some(p) = &self.pieces[y][x] {
-                                if !p.is_valid_move(&to, self) {
+                                if !p.move_piece(&to, self).is_ok() {
                                     continue;
                                 }
                             }
@@ -185,5 +202,9 @@ impl Board {
             }
         }
         false
+    }
+
+    pub fn is_within_bounds(&self, position: &Position) -> bool {
+        position.x >= 0 && position.x < 8 && position.y >= 0 && position.y < 8
     }
 }
