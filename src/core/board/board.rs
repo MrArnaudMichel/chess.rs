@@ -143,7 +143,6 @@ impl Board {
         let king_pos = match king_position {
             Some(pos) => pos,
             None => {
-                println!("No king found for side {}!", side);
                 return false;
             }
         };

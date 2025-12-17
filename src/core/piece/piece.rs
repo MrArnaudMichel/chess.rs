@@ -28,6 +28,7 @@ impl Piece {
     pub fn get_position_mut(&mut self) -> &mut Position {
         &mut self.position
     }
+
     pub fn get_side(&self) -> u8 {
         self.side
     }
@@ -38,10 +39,5 @@ impl Piece {
 
     pub fn has_moved(&self) -> bool {
         self.move_count > 0
-    }
-    
-    #[allow(dead_code)]
-    pub fn get_move_count(&self) -> i8 {
-        self.move_count
     }
 }
