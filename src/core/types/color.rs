@@ -9,3 +9,11 @@ pub fn invert_color(color: &mut u8) -> u8 {
     };
     *color
 }
+
+pub fn color_to_string(color: u8) -> &'static str {
+    match color {
+        WHITE => "White",
+        BLACK => "Black",
+        _ => "Unknown",
+    }
+}

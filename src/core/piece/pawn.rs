@@ -27,6 +27,7 @@ impl ChessPiece for Pawn {
     fn as_any(&self) -> &dyn Any {
         self
     }
+
     fn get_position(&self) -> &Position {
         self.piece.get_position()
     }
@@ -59,7 +60,6 @@ impl ChessPiece for Pawn {
 
         if dx.abs() == 1 && dy == dir {
 
-            // 1. Normal capture
             if board.is_occupied(destination) == ((side ^ 1) as i8){
                 if is_promotion_rank(destination, side) {
                     return Ok(Promotion);

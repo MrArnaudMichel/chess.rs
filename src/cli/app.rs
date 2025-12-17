@@ -2,7 +2,7 @@
 
 use crate::core::game::Game;
 use crate::cli::{renderer, input};
-use crate::core::types::color::invert_color;
+use crate::core::types::color::{color_to_string, invert_color};
 use crate::core::types::r#move::{MoveError, MoveOutcome};
 
 pub fn run() {
@@ -27,7 +27,7 @@ pub fn run() {
             println!("ATTENTION : Votre roi est en échec !");
         }
 
-        println!("Tour du joueur {} (entrez 'quit' pour quitter)", game.turn);
+        println!("Tour du joueur {} (entrez 'quit' pour quitter)", color_to_string(game.turn));
 
         // Assumption: input::read_move handles the string parsing. 
         // If the user types "quit", return None or handle it inside input.
@@ -38,8 +38,8 @@ pub fn run() {
             None => {
                 // If read_move returns None, it might be an error or a signal to quit.
                 // Let's assume for now None means "Invalid Format" or "Quit".
-                println!("Commande invalide ou arrêt.");
-                continue;
+                println!("Arret du jeu.");
+                return;
             }
         };
 
