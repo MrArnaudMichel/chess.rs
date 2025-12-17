@@ -90,7 +90,7 @@ impl Board {
         }
 
         if self.is_checked(turn, None) {
-            let _ = self._move_piece_internal(to.clone(), from.clone());
+            let _ = self._move_piece_no_mark(to.clone(), from.clone());
 
             self.pieces[to.y as usize][to.x as usize] = captured_piece;
 
@@ -119,6 +119,24 @@ impl Board {
 
         let captured = self.pieces[to_y][to_x].take();
 
+        self.pieces[to_y][to_x] = Some(piece);
+
+        Ok(captured)
+    }
+
+    /// Internal move function that does NOT mark the piece as moved (used for simulation/undo logic).
+    fn _move_piece_no_mark(&mut self, from: Position, to: Position) -> Result<Option<Box<dyn ChessPiece>>, MoveError> {
+        let (from_x, from_y) = (from.x as usize, from.y as usize);
+        let (to_x, to_y) = (to.x as usize, to.y as usize);
+
+        let mut piece = self.pieces[from_y][from_x].take().ok_or(NoPiece)?;
+
+        // Update position without calling shift / mark_moved
+        let pos: &mut crate::core::types::position::Position = piece.get_position_mut();
+        pos.x = to.x;
+        pos.y = to.y;
+
+        let captured = self.pieces[to_y][to_x].take();
         self.pieces[to_y][to_x] = Some(piece);
 
         Ok(captured)
@@ -184,11 +202,11 @@ impl Board {
                                 }
                             }
 
-                            if self.move_piece(from.clone(), to.clone(), side).is_ok() {
-                                self._move_piece_internal(to.clone(), from.clone()).unwrap();
-                                let captured = self._move_piece_internal(from.clone(), to.clone()).unwrap();
+                            // simulate the move without marking pieces as moved
+                            if let Ok(captured) = self._move_piece_no_mark(from.clone(), to.clone()) {
                                 let still_checked = self.is_checked(side, None);
-                                let _ = self._move_piece_internal(to.clone(), from.clone());
+                                // undo simulation
+                                let _ = self._move_piece_no_mark(to.clone(), from.clone()).unwrap();
                                 self.pieces[target_y as usize][target_x as usize] = captured;
 
                                 if !still_checked {
@@ -205,5 +223,24 @@ impl Board {
 
     pub fn is_within_bounds(&self, position: &Position) -> bool {
         position.x >= 0 && position.x < 8 && position.y >= 0 && position.y < 8
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::core::game::Game;
+    use crate::core::types::position::{A2, A4, A7, A5};
+    use crate::core::types::color::{WHITE, BLACK};
+
+    #[test]
+    fn white_two_step_then_black_two_step() {
+        let mut game = Game::new();
+        game.setup();
+
+        let res1 = game.board.move_piece(A2, A4, WHITE);
+        assert!(res1.is_ok(), "White a2->a4 should be Ok but got: {:?}", res1);
+
+        let res2 = game.board.move_piece(A7, A5, BLACK);
+        assert!(res2.is_ok(), "Black a7->a5 should be Ok but got: {:?}", res2);
     }
 }

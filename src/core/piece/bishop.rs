@@ -94,3 +94,44 @@ impl ChessPiece for Bishop {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::color::{BLACK, WHITE};
+    use crate::core::types::position::{C1, D2, E3, C4};
+    use crate::core::piece::queen::Queen;
+
+    fn setup_bishop() -> (Board, Bishop) {
+        let board = Board::new();
+        let bishop = Bishop::new(C1, WHITE);
+        (board, bishop)
+    }
+
+    #[test]
+    fn bishop_moves_diagonally() {
+        let (board, bishop) = setup_bishop();
+        assert!(bishop.move_piece(&E3, &board).is_ok());
+    }
+
+    #[test]
+    fn bishop_blocked_path() {
+        let (mut board, bishop) = setup_bishop();
+        board.place_piece(Box::new(Queen::new(D2, BLACK)));
+        assert!(!bishop.move_piece(&E3, &board).is_ok());
+    }
+
+    #[test]
+    fn bishop_captures_enemy() {
+        let (mut board, bishop) = setup_bishop();
+        board.place_piece(Box::new(Bishop::new(E3, BLACK)));
+        assert!(bishop.move_piece(&E3, &board).is_ok());
+    }
+
+    #[test]
+    fn bishop_invalid_straight_move() {
+        let (board, bishop) = setup_bishop();
+        assert!(!bishop.move_piece(&C4, &board).is_ok());
+    }
+}

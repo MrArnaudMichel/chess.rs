@@ -37,6 +37,8 @@ pub trait ChessPiece: Any {
     }
 
     fn shift(&mut self, x: i8, y: i8) {
+        // debug
+        println!("CHESS_PIECE DEBUG: shift called for piece {} to ({}, {})", self.get_name(), x, y);
         let pos: &mut Position = self.get_position_mut();
         pos.x = x;
         pos.y = y;

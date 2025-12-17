@@ -75,3 +75,45 @@ impl ChessPiece for Knight {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'N')
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::color::{WHITE, BLACK};
+    use crate::core::types::position::{B1, C3, A3, B3};
+
+    fn setup_knight() -> (Board, Knight) {
+        let board = Board::new();
+        let knight = Knight::new(B1, WHITE);
+        (board, knight)
+    }
+
+    #[test]
+    fn knight_moves_l_shape() {
+        let (board, knight) = setup_knight();
+        assert!(knight.move_piece(&C3, &board).is_ok());
+        assert!(knight.move_piece(&A3, &board).is_ok());
+    }
+
+    #[test]
+    fn knight_ignores_blockers() {
+        let (mut board, knight) = setup_knight();
+        // place a blocker on B2 which would block other pieces but not the knight
+        board.place_piece(Box::new(Knight::new(B3, BLACK)));
+        assert!(knight.move_piece(&C3, &board).is_ok());
+    }
+
+    #[test]
+    fn knight_captures_enemy() {
+        let (mut board, knight) = setup_knight();
+        board.place_piece(Box::new(Knight::new(C3, BLACK)));
+        assert!(knight.move_piece(&C3, &board).is_ok());
+    }
+
+    #[test]
+    fn knight_invalid_move() {
+        let (board, knight) = setup_knight();
+        assert!(!knight.move_piece(&B3, &board).is_ok());
+    }
+}

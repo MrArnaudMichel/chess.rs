@@ -132,3 +132,76 @@ impl ChessPiece for Pawn {
 fn is_promotion_rank(position: &Position, side: u8) -> bool {
     (side == 0 && position.y == 7) || (side == 1 && position.y == 0)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::color::{BLACK, WHITE};
+    use crate::core::types::position::{B2, B3, B4, C3, G7, G8, B5, C7, C6};
+    use crate::core::piece::rook::Rook;
+    use crate::core::types::r#move::MoveOutcome::EnPassant;
+
+    fn setup_pawn() -> (Board, Pawn) {
+        let board = Board::new();
+        let pawn = Pawn::new(B2, WHITE);
+        (board, pawn)
+    }
+
+    #[test]
+    fn pawn_moves_one_forward() {
+        let (board, pawn) = setup_pawn();
+        assert!(pawn.move_piece(&B3, &board).is_ok());
+    }
+
+    #[test]
+    fn pawn_moves_two_forward_first_move() {
+        let (board, pawn) = setup_pawn();
+        assert!(pawn.move_piece(&B4, &board).is_ok());
+    }
+
+    #[test]
+    fn pawn_blocked_forward() {
+        let (mut board, pawn) = setup_pawn();
+        board.place_piece(Box::new(Rook::new(B3, BLACK)));
+        assert!(!pawn.move_piece(&B4, &board).is_ok());
+    }
+
+    #[test]
+    fn pawn_can_capture_diagonally() {
+        let (mut board, pawn) = setup_pawn();
+        board.place_piece(Box::new(Pawn::new(C3, BLACK)));
+        assert!(pawn.move_piece(&C3, &board).is_ok());
+    }
+
+    #[test]
+    fn pawn_promotion_detected() {
+        let board = Board::new();
+        let pawn = Pawn::new(G7, WHITE);
+        let outcome = pawn.move_piece(&G8, &board).unwrap();
+        // promotion variant should be returned
+        match outcome {
+            MoveOutcome::Promotion => {}
+            _ => panic!("Expected Promotion outcome"),
+        }
+    }
+
+    #[test]
+    fn pawn_en_passant_capture() {
+        let mut board = Board::new();
+        // white pawn that will perform en-passant
+        let pawn = Pawn::new(B5, WHITE);
+
+        // simulate a black pawn that moved two squares from C7 to C5 and is vulnerable
+        let mut enemy = Pawn::new(C7, BLACK);
+        enemy.shift(2, 4); // now at C5 and en_passant_vulnerable == true
+        board.place_piece(Box::new(enemy));
+
+        // attempt en-passant: white pawn moves from B5 to C6 capturing pawn at C5
+        let outcome = pawn.move_piece(&C6, &board).unwrap();
+        match outcome {
+            EnPassant { captured } => assert_eq!(captured, crate::core::types::position::Position::new(2, 4)),
+            _ => panic!("Expected EnPassant outcome"),
+        }
+    }
+}

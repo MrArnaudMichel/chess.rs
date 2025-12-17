@@ -95,3 +95,53 @@ impl ChessPiece for King {
         format!("{}{}", if self.get_side() == 0 {'W'} else {'B'}, 'K')
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::board::board::Board;
+    use crate::core::types::color::{WHITE, BLACK};
+    use crate::core::types::position::{E1, E2, F1, H1, G1};
+    use crate::core::piece::rook::Rook;
+
+    fn setup_king() -> (Board, King) {
+        let board = Board::new();
+        let king = King::new(E1, WHITE);
+        (board, king)
+    }
+
+    #[test]
+    fn king_moves_one_square() {
+        let (board, king) = setup_king();
+        assert!(king.move_piece(&E2, &board).is_ok());
+        assert!(king.move_piece(&F1, &board).is_ok());
+    }
+
+    #[test]
+    fn king_cannot_move_onto_ally() {
+        let (mut board, king) = setup_king();
+        board.place_piece(Box::new(Rook::new(E2, WHITE)));
+        assert!(!king.move_piece(&E2, &board).is_ok());
+    }
+
+    #[test]
+    fn king_can_capture_enemy() {
+        let (mut board, king) = setup_king();
+        board.place_piece(Box::new(Rook::new(E2, BLACK)));
+        assert!(king.move_piece(&E2, &board).is_ok());
+    }
+
+    #[test]
+    fn king_castling_kingside() {
+        let (mut board, king) = setup_king();
+        // place a rook on H1 that hasn't moved
+        board.place_piece(Box::new(Rook::new(H1, WHITE)));
+        assert!(king.move_piece(&H1, &board).is_ok());
+    }
+
+    #[test]
+    fn king_invalid_far_move() {
+        let (board, king) = setup_king();
+        assert!(!king.move_piece(&G1, &board).is_ok());
+    }
+}
