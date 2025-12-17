@@ -27,8 +27,8 @@ impl Game {
 
         let major_pieces: Vec<(&dyn Fn(Position, u8) -> Box<dyn ChessPiece>, &[(Position, u8)])> = vec![
             (&|position, side| Box::new(Rook::new(position, side)), &[(A1, WHITE), (A8, WHITE), (H1, BLACK), (H8, BLACK)]),
-            (&|position, side| Box::new(Bishop::new(position, side)), &[(C1, WHITE), (C8, WHITE), (F1, BLACK), (F8, BLACK)]),
-            (&|position, side| Box::new(Knight::new(position, side)), &[(B1, WHITE), (B8, WHITE), (G1, BLACK), (G8, BLACK)]),
+            (&|position, side| Box::new(Bishop::new(position, side)), &[(C1, WHITE), (C8, BLACK), (F1, WHITE), (F8, BLACK)]),
+            (&|position, side| Box::new(Knight::new(position, side)), &[(B1, WHITE), (B8, BLACK), (G1, WHITE), (G8, BLACK)]),
             (&|position, side| Box::new(Queen::new(position, side)), &[(D1, WHITE), (D8, BLACK)]),
             (&|position, side| Box::new(King::new(position, side)), &[(E1, WHITE), (E8, BLACK)]),
         ];

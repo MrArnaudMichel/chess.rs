@@ -40,7 +40,7 @@ pub fn run() {
 
         // If you added a flag to your move struct or input for quitting:
         // if mv.is_quit() { break; }
-
+        print!("{}", game.turn);
         let moved = game.board.move_piece(
             mv.initial_position().clone(),
             mv.finish_position().clone(),
