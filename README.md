@@ -21,7 +21,6 @@ You need a recent Rust toolchain and GTK4 installed on your system.
 - GTK 4 development libraries
 
 Platform-specific hints:
-
 - Ubuntu/Debian
   - sudo apt update
   - sudo apt install -y build-essential pkg-config libgtk-4-dev
