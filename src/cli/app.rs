@@ -1,5 +1,3 @@
-// crate/main.rs (or wherever run is)
-
 use crate::core::game::Game;
 use crate::cli::{renderer, input};
 use crate::core::types::color::{color_to_string, invert_color};
@@ -19,28 +17,25 @@ pub fn run() {
             } else {
                 println!("PAT ! Match nul.");
             }
-            break; // End the game
+            break;
         }
 
-        // Notify if just in simple Check
         if game.board.is_checked(game.turn, None) {
             println!("ATTENTION : Votre roi est en échec !");
         }
 
         println!("Tour du joueur {} (entrez 'quit' pour quitter)", color_to_string(game.turn));
 
-        // Assumption: input::read_move handles the string parsing. 
-        // If the user types "quit", return None or handle it inside input.
-        // Here, assuming read_move returns Option<Move>. 
-        // If you want explicit quit, check the raw input or add a Quit variant to your Move struct.
         let mv = match input::read_move() {
-            Some(mv) => mv,
-            None => {
-                // If read_move returns None, it might be an error or a signal to quit.
-                // Let's assume for now None means "Invalid Format" or "Quit".
-                println!("Arret du jeu.");
-                return;
-            }
+            input::UserInput::Move(mv) => mv,
+            input::UserInput::Quit => {
+                println!("Jeu terminé par l'utilisateur.");
+                break;
+            },
+            input::UserInput::Invalid => {
+                println!("Entrée invalide, veuillez réessayer.");
+                continue;
+            },
         };
 
         // If you added a flag to your move struct or input for quitting:
